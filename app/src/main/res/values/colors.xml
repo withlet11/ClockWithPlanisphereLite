@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1234EE</color>
+    <color name="colorPrimaryDark">#082080</color>
+    <color name="colorAccent">#1090FF</color>
+    <color name="colorPlainText">#FFFFFF</color>
+    <color name="ecliptic">#C0C020</color>
+    <color name="sun">#FFC020</color>
+</resources>

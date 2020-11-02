@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Sky Clock</string>
+    <string name="locationSettings">Location Settings</string>
+    <string name="license">License</string>
+    <string name="opensource_licenses">OpenSource Licenses</string>
+    <string name="latitude">"Latitude: "</string>
+    <string name="latitudeHint">+23.4567</string>
+    <string name="longitude">"Longitude: "</string>
+    <string name="longitudeHint">+123.456</string>
+    <string name="gps">GPS</string>
+    <string name="modify">Modify</string>
+    <string name="inGettingLocation">in getting location…</string>
+    <string name="checkAppLvlPermission">Please check the app-level permissions to access from %s</string>
+    <string name="pleaseCheckIfGPSIsOn">Please check if GPS is on.</string>
+    <string name="app_license">Copyright 2020 Yasuhiro Yamakawa &lt;withlet11@gmail.com&gt;\n\n
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this
+        software and associated documentation files (the "Software"), to deal in the Software
+        without restriction, including without limitation the rights to use, copy, modify, merge,
+        publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+        to whom the Software is furnished to do so, subject to the following conditions:\n\n
+        The above copyright notice and this permission notice shall be included in all copies or
+        substantial portions of the Software.\n\n
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+        INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+        PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+        FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+        OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+        DEALINGS IN THE SOFTWARE. </string>
+    <string name="north_label">N</string>
+    <string name="south_label">S</string>
+    <string name="ns_switch">NS Switch</string>
+    <string name="gps_is_disable">GPS is disable.</string>
+    <string name="no_permission_to_access_location_permanent">No permission to access the location service. Please check the application permission in the system settings.</string>
+    <string name="no_permission_to_access_location_once">No permission to access the location service.</string>
+</resources>
