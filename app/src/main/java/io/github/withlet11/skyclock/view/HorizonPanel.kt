@@ -25,6 +25,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import io.github.withlet11.skyclock.R
 import kotlin.math.max
 import kotlin.math.min
 
@@ -46,6 +47,11 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : View(context, attr
     var isZoomed = false
     private var narrowSideLength = 0
     private var wideSideLength = 0
+
+    private val horizonColor = context?.getColor(R.color.smoke) ?: 0
+    private val altAzimuthLineColor = context?.getColor(R.color.skyBlue) ?: 0
+    private val directionLetterColor = context?.getColor(R.color.lightGray) ?: 0
+    private val siderealTimeIndicatorColor = context?.getColor(R.color.yellow) ?: 0
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -76,7 +82,7 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : View(context, attr
     }
 
     private fun Canvas.drawHorizon() {
-        paint.color = Color.argb(128, 0, 0, 0)
+        paint.color = horizonColor
         paint.style = Paint.Style.FILL
         path.moveTo(horizon[0].first * CIRCLE_RADIUS, horizon[0].second * CIRCLE_RADIUS)
         horizon.forEach { path.lineTo(it.first * CIRCLE_RADIUS, it.second * CIRCLE_RADIUS) }
@@ -85,7 +91,7 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : View(context, attr
     }
 
     private fun Canvas.drawAltitudeAndAzimuthLines() {
-        paint.color = Color.rgb(127, 191, 255)
+        paint.color = altAzimuthLineColor
         paint.strokeWidth = 1f
         paint.pathEffect = dottedLine
         paint.style = Paint.Style.STROKE
@@ -112,20 +118,23 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : View(context, attr
     }
 
     private fun Canvas.drawDirectionLetters() {
-        paint.color = Color.LTGRAY
+        paint.color = directionLetterColor
         paint.style = Paint.Style.FILL
         paint.textSize = 18f
         val fontMetrics = paint.fontMetrics
         directionLetters.forEach { triple ->
             val textWidth = paint.measureText(triple.first)
-            this.drawText(triple.first,
+            this.drawText(
+                triple.first,
                 triple.second * CIRCLE_RADIUS - textWidth * 0.5f,
                 triple.third * CIRCLE_RADIUS + textWidth * 0.5f,
-                paint)
+                paint
+            )
         }
     }
+
     private fun Canvas.drawSiderealTimeIndicator() {
-        paint.color = Color.YELLOW
+        paint.color = siderealTimeIndicatorColor
         paint.style = Paint.Style.FILL
         /*
         this.drawCircle(

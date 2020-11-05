@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Theme & Accent-->
     <color name="colorPrimary">#1234EE</color>
     <color name="colorPrimaryDark">#082080</color>
     <color name="colorAccent">#1090FF</color>
     <color name="colorPlainText">#FFFFFF</color>
-    <color name="ecliptic">#C0C020</color>
-    <color name="sun">#FFC020</color>
+
+    <!-- Standard colors -->
+    <color name="black">#000000</color>
+    <color name="darkBlue">#040820</color>
+    <color name="midnightBlue">#081040</color>
+    <color name="skyBlue">#80C0FF</color>
+    <color name="lightGray">#CCCCCC</color>
+    <color name="gray">#888888</color>
+    <color name="darkGray">#444444</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="lemon">#C0C020</color>
+    <color name="orange">#FFC020</color>
+    <color name="raspberry">#c02020</color>
+    <color name="red">#ff0000</color>
+
+    <!-- Transparent -->
+    <color name="smoke">#80000000</color>
+    <color name="transparentBlue1">#C0C0E0FF</color>
+    <color name="transparentBlue2">#C080C0FF</color>
+    <color name="transparentBlue3">#C04080C0</color>
 </resources>

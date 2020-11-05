@@ -50,6 +50,9 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private var wideSideLength = 0
 
 
+    private val eclipticColor = context?.getColor(R.color.lemon) ?: 0
+    private val sunColor = context?.getColor(R.color.orange) ?: 0
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
@@ -79,7 +82,7 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
 
     private fun Canvas.drawAnalemma() {
-        paint.color = context.getColor(R.color.ecliptic) // Color.rgb(192, 192, 32)
+        paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
         path.moveTo(analemma.last().first * CIRCLE_RADIUS, analemma.last().second * CIRCLE_RADIUS)
@@ -89,7 +92,7 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun Canvas.drawMonthlyPosition() {
-        paint.color = context.getColor(R.color.ecliptic) // Color.rgb(192, 192, 32)
+        paint.color = eclipticColor
         paint.style = Paint.Style.FILL
         val monthTextList =
             listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII")
@@ -115,7 +118,7 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun Canvas.drawCurrentPosition() {
-        paint.color = context.getColor(R.color.sun)
+        paint.color = sunColor
         paint.style = Paint.Style.FILL
         drawCircle(
             currentPosition.first * CIRCLE_RADIUS,

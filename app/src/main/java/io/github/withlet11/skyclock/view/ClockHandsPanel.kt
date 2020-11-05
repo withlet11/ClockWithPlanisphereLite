@@ -23,10 +23,10 @@ package io.github.withlet11.skyclock.view
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import io.github.withlet11.skyclock.R
 
 class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     companion object {
@@ -43,6 +43,10 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : View(context, a
     var isLandScape = false
     var narrowSideLength = 0
     var wideSideLength = 0
+
+    private val hourHandsColor = context?.getColor(R.color.transparentBlue2) ?: 0
+    private val minuteHandsColor = context?.getColor(R.color.transparentBlue3) ?: 0
+    private val secondHandsColor = context?.getColor(R.color.transparentBlue1) ?: 0
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -91,7 +95,7 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : View(context, a
     private fun drawHourHand(canvas: Canvas) {
         canvas.save()
         canvas.rotate(180f / 6f * (hour + (minute + second / 60f) / 60f + 6f))
-        paint.color = Color.argb(191, 127, 191, 255)
+        paint.color = hourHandsColor
         paint.style = Paint.Style.FILL
         canvas.drawRect(
             -PREFERRED_SIZE * 0.006f,
@@ -106,7 +110,7 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : View(context, a
     private fun drawMinuteHand(canvas: Canvas) {
         canvas.save()
         canvas.rotate(180f / 30f * (minute + second / 60f + 30f))
-        paint.color = Color.argb(191, 63, 127, 191)
+        paint.color = minuteHandsColor
         paint.style = Paint.Style.FILL
         canvas.drawRect(
             -PREFERRED_SIZE * 0.005f,
@@ -121,9 +125,10 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : View(context, a
     private fun drawSecondHand(canvas: Canvas) {
         canvas.save()
         canvas.rotate(180f / 30f * (second + 30f))
-        paint.color = Color.argb(191, 192, 224, 255)
+        paint.color = secondHandsColor
         paint.style = Paint.Style.FILL
-        canvas.drawRect(-PREFERRED_SIZE * 0.002f,
+        canvas.drawRect(
+            -PREFERRED_SIZE * 0.002f,
             -PREFERRED_SIZE * 0.05f,
             PREFERRED_SIZE * 0.002f,
             PREFERRED_SIZE * 0.48f,

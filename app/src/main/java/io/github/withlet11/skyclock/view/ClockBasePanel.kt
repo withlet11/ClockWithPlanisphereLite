@@ -23,10 +23,10 @@ package io.github.withlet11.skyclock.view
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import io.github.withlet11.skyclock.R
 import io.github.withlet11.skyclock.model.DateObject
 import kotlin.math.PI
 import kotlin.math.max
@@ -46,6 +46,15 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
     var isZoomed = false
     private var narrowSideLength = 0
     private var wideSideLength = 0
+
+    private val bezelColor = context?.getColor(R.color.darkBlue) ?: 0
+    private val minuteGridColor = context?.getColor(R.color.gray) ?: 0
+    private val datePanelColor = context?.getColor(R.color.lightGray) ?: 0
+    private val todayGridColor = context?.getColor(R.color.red) ?: 0
+    private val dayGridColor = context?.getColor(R.color.black) ?: 0
+    private val monthBorderColor = context?.getColor(R.color.darkGray) ?: 0
+    private val monthNameColor = context?.getColor(R.color.black) ?: 0
+    private val skyBackGroundColor = context?.getColor(R.color.midnightBlue) ?: 0
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -74,9 +83,9 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
 
     private fun Canvas.drawBackPanel() {
         listOf(
-            0.5f to Color.rgb(4, 8, 32),
-            0.46f to Color.LTGRAY,
-            0.42f to Color.rgb(8, 16, 64)
+            0.5f to bezelColor,
+            0.46f to datePanelColor,
+            0.42f to skyBackGroundColor
         ).forEach { (size, color) ->
             val r = PREFERRED_SIZE * size
             paint.color = color
@@ -96,7 +105,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
         val dot1OffsetY = offsetY + rectangleSize * 0.5f
         val dot2OffsetY = offsetY + rectangleSize * 0.5f
 
-        paint.color = Color.GRAY
+        paint.color = minuteGridColor
         paint.style = Paint.Style.FILL
         for (i in 0..59) {
             this.save()
@@ -143,10 +152,10 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
             this.rotate((-360f / dateList.size * date.dayOfYear + offset + 180f) * if (direction) -1f else 1f)
 
             when {
-                date.isToday -> Color.RED to 4f
-                date.dayOfMonth % 10 == 0 -> Color.BLACK to 3f
-                date.dayOfMonth % 5 == 0 -> Color.BLACK to 2f
-                else -> Color.BLACK to 1f
+                date.isToday -> todayGridColor to 4f
+                date.dayOfMonth % 10 == 0 -> dayGridColor to 3f
+                date.dayOfMonth % 5 == 0 -> dayGridColor to 2f
+                else -> dayGridColor to 1f
             }.let { (color, r) ->
                 paint.style = Paint.Style.FILL
                 paint.color = color
@@ -162,7 +171,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
         paint.textSize = 24f
         when (date.dayOfMonth) {
             1 -> {
-                paint.color = Color.DKGRAY
+                paint.color = monthBorderColor
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 2f
                 val startY = PREFERRED_SIZE * 0.42f
@@ -177,7 +186,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
                 )
             }
             15 -> {
-                paint.color = Color.BLACK
+                paint.color = monthNameColor
                 paint.style = Paint.Style.FILL
                 val text = date.monthString
                 val fontMetrics = paint.fontMetrics

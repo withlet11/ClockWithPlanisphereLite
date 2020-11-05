@@ -55,15 +55,15 @@ class SunModel(private val skyModel: AbstractSkyModel) {
      * create analemma geometry list [analemmaGeometryList]
      */
     private fun getAnalemma(): List<Pair<Float, Float>> {
-        return List(25) { it * 15 }.map { it ->
-            val jc = LocalTime.getJc(2020, 1, 1, 0) + it / 36525.0
+        return List(25) { it * 15 }.map { dayOfYear ->
+            val jc = LocalTime.getJc(2020, 1, 1, 0) + dayOfYear / 36525.0
             getSunPosition(jc)
         }
     }
 
     private fun createMonthlyPositionList(): List<Pair<Float, Float>> {
-        return listOf(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334).map { it ->
-            val jc = LocalTime.getJc(2020, 1, 1, 0) + it / 36525.0
+        return listOf(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334).map { dayOfYear ->
+            val jc = LocalTime.getJc(2020, 1, 1, 0) + dayOfYear / 36525.0
             getSunPosition(jc)
         }
     }

@@ -25,6 +25,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import io.github.withlet11.skyclock.R
 import io.github.withlet11.skyclock.model.ConstellationLineGeometry
 import io.github.withlet11.skyclock.model.StarGeometry
 import kotlin.math.*
@@ -44,12 +45,19 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     var constellationLineList = listOf<ConstellationLineGeometry>()
     var equatorial = listOf<Pair<Int, Float>>()
     var ecliptic = listOf<Pair<Float, Float>>()
-    var siderealAngle  = 0f
+    var siderealAngle = 0f
     var tenMinuteGridStep = 180f / 72f
     var isZoomed = false
     private var narrowSideLength = 0
     private var wideSideLength = 0
 
+    private val equatorColor = context?.getColor(R.color.raspberry) ?: 0
+    private val latitudeLineColor = context?.getColor(R.color.lightGray) ?: 0
+    private val eclipticColor = context?.getColor(R.color.lemon) ?: 0
+    private val starColor = context?.getColor(R.color.lightGray) ?: 0
+    private val constellationLineColor = context?.getColor(R.color.lightGray) ?: 0
+    private val rectAscensionLineColor = context?.getColor(R.color.lightGray) ?: 0
+    private val rectAscensionRing = context?.getColor(R.color.lightGray) ?: 0
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -84,11 +92,11 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private fun Canvas.drawEquatorial() {
         equatorial.forEach {
             if (it.first == 0) {
-                paint.color = Color.rgb(192, 32, 32)
+                paint.color = equatorColor
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 1f
             } else {
-                paint.color = Color.LTGRAY
+                paint.color = latitudeLineColor
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 0.75f
             }
@@ -101,7 +109,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun Canvas.drawEcliptic() {
-        paint.color = Color.rgb(192, 192, 32)
+        paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
         path.moveTo(ecliptic[0].first * CIRCLE_RADIUS, ecliptic[0].second * CIRCLE_RADIUS)
@@ -111,19 +119,21 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun Canvas.drawStars() {
-        paint.color = Color.LTGRAY
+        paint.color = starColor
         paint.style = Paint.Style.FILL
         starGeometryList.forEach {
-            this.drawCircle(it.x * CIRCLE_RADIUS,
+            this.drawCircle(
+                it.x * CIRCLE_RADIUS,
                 it.y * CIRCLE_RADIUS,
                 it.r,
-                paint)
+                paint
+            )
         }
     }
 
     private fun Canvas.drawConstellationLines() {
         paint.strokeWidth = 1f
-        paint.color = Color.LTGRAY
+        paint.color = constellationLineColor
         constellationLineList.forEach {
             this.drawLine(
                 it.x1 * CIRCLE_RADIUS,
@@ -137,7 +147,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private fun Canvas.drawRectAscensionLines() {
         paint.strokeWidth = 0.75f
-        paint.color = Color.LTGRAY
+        paint.color = rectAscensionLineColor
         for (i in 1..6) {
             val angle = i / 6.0 * PI
             val x = cos(angle).toFloat() * CIRCLE_RADIUS
@@ -148,7 +158,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private fun Canvas.drawRectAscensionRing() {
         paint.textSize = 16f
-        paint.color = Color.LTGRAY
+        paint.color = rectAscensionRing
         paint.style = Paint.Style.FILL
         val fontMetrics = paint.fontMetrics
 
