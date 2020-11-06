@@ -28,44 +28,15 @@ import android.util.AttributeSet
 import android.view.View
 import io.github.withlet11.skyclock.R
 
-class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-    companion object {
-        private const val PREFERRED_SIZE = 800
-        private const val CENTER = PREFERRED_SIZE * 0.5f
-    }
-
-    private val paint = Paint()
-
+class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
     var hour = 0
     var minute = 0
     var second = 0
-    var isZoomed = false
-    var isLandScape = false
-    var narrowSideLength = 0
-    var wideSideLength = 0
 
+    private val paint = Paint().apply { isAntiAlias = true }
     private val hourHandsColor = context?.getColor(R.color.transparentBlue2) ?: 0
     private val minuteHandsColor = context?.getColor(R.color.transparentBlue3) ?: 0
     private val secondHandsColor = context?.getColor(R.color.transparentBlue1) ?: 0
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        isLandScape = (widthSize > heightSize).also {
-            if (it) {
-                narrowSideLength = heightSize
-                wideSideLength = widthSize
-            } else {
-                narrowSideLength = widthSize
-                wideSideLength = heightSize
-            }
-        }
-
-        setMeasuredDimension(wideSideLength, wideSideLength)
-    }
-
 
     override fun performClick(): Boolean {
         return super.performClick()
@@ -73,67 +44,37 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : View(context, a
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-        val drawAreaSize = if (isZoomed) wideSideLength else narrowSideLength
-        val scale = drawAreaSize.toFloat() / PREFERRED_SIZE
-
-        paint.isAntiAlias = true
-
-        canvas?.save()
-        canvas?.scale(scale, scale)
-        canvas?.translate(CENTER, CENTER)
-
-        canvas?.let {
-            drawHourHand(canvas)
-            drawMinuteHand(canvas)
-            drawSecondHand(canvas)
+        canvas?.run {
+            drawHourHand()
+            drawMinuteHand()
+            drawSecondHand()
         }
-
-        canvas?.restore()
     }
 
-    private fun drawHourHand(canvas: Canvas) {
-        canvas.save()
-        canvas.rotate(180f / 6f * (hour + (minute + second / 60f) / 60f + 6f))
+    private fun Canvas.drawHourHand() {
+        save()
+        rotate(180f / 6f * (hour + (minute + second / 60f) / 60f + 6f))
         paint.color = hourHandsColor
         paint.style = Paint.Style.FILL
-        canvas.drawRect(
-            -PREFERRED_SIZE * 0.006f,
-            -PREFERRED_SIZE * 0.05f,
-            PREFERRED_SIZE * 0.006f,
-            PREFERRED_SIZE * 0.30f,
-            paint
-        )
-        canvas.restore()
+        drawRect(-5f, -40f, 5f, 240f, paint)
+        restore()
     }
 
-    private fun drawMinuteHand(canvas: Canvas) {
-        canvas.save()
-        canvas.rotate(180f / 30f * (minute + second / 60f + 30f))
+    private fun Canvas.drawMinuteHand() {
+        save()
+        rotate(180f / 30f * (minute + second / 60f + 30f))
         paint.color = minuteHandsColor
         paint.style = Paint.Style.FILL
-        canvas.drawRect(
-            -PREFERRED_SIZE * 0.005f,
-            -PREFERRED_SIZE * 0.05f,
-            PREFERRED_SIZE * 0.005f,
-            PREFERRED_SIZE * 0.48f,
-            paint
-        )
-        canvas.restore()
+        drawRect(-4f, -40f, 4f, 384f, paint)
+        restore()
     }
 
-    private fun drawSecondHand(canvas: Canvas) {
-        canvas.save()
-        canvas.rotate(180f / 30f * (second + 30f))
+    private fun Canvas.drawSecondHand() {
+        save()
+        rotate(180f / 30f * (second + 30f))
         paint.color = secondHandsColor
         paint.style = Paint.Style.FILL
-        canvas.drawRect(
-            -PREFERRED_SIZE * 0.002f,
-            -PREFERRED_SIZE * 0.05f,
-            PREFERRED_SIZE * 0.002f,
-            PREFERRED_SIZE * 0.48f,
-            paint
-        )
-        canvas.restore()
+        drawRect(-1.5f, -40f, 1.5f, 384f, paint)
+        restore()
     }
 }

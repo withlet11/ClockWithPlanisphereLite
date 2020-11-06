@@ -34,10 +34,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.*
 
 class LocationSettingActivity : AppCompatActivity() {
     private var latitude: Double? = 0.0
@@ -89,6 +86,8 @@ class LocationSettingActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.my_toolbar2)) // ToolBar instead of ActionBar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_action_cancel)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -135,8 +134,6 @@ class LocationSettingActivity : AppCompatActivity() {
                 }
             })
         }
-
-        fusedLocationClient = FusedLocationProviderClient(this)
 
         applyLocationButton = findViewById<Button>(R.id.applyLocationButton).apply {
             setOnClickListener {
@@ -214,7 +211,7 @@ class LocationSettingActivity : AppCompatActivity() {
         ) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_PERMISSION
             )
         } else {

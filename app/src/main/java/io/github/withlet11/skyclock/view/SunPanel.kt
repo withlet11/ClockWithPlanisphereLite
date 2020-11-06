@@ -24,60 +24,31 @@ package io.github.withlet11.skyclock.view
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.View
 import io.github.withlet11.skyclock.R
 import kotlin.math.*
 
 
-class SunPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-    companion object {
-        private const val PREFERRED_SIZE = 800
-        private const val CENTER = PREFERRED_SIZE * 0.5f
-        private const val CIRCLE_RADIUS = PREFERRED_SIZE * 0.4f
-    }
-
-    private val paint = Paint()
-    private val path = Path()
-
+class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
     var analemma = listOf<Pair<Float, Float>>()
     var monthlyPositionList = listOf<Pair<Float, Float>>()
     var currentPosition = 0f to 0f
 
     var siderealAngle = 0f
     var tenMinuteGridStep = 180f / 72f
-    var isZoomed = false
-    private var narrowSideLength = 0
-    private var wideSideLength = 0
 
-
+    private val paint = Paint().apply { isAntiAlias = true }
+    private val path = Path()
     private val eclipticColor = context?.getColor(R.color.lemon) ?: 0
     private val sunColor = context?.getColor(R.color.orange) ?: 0
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        narrowSideLength = min(widthSize, heightSize)
-        wideSideLength = max(widthSize, heightSize)
-        setMeasuredDimension(wideSideLength, wideSideLength)
-    }
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-        val drawAreaSize = if (isZoomed) wideSideLength else narrowSideLength
-        val scale = drawAreaSize.toFloat() / PREFERRED_SIZE
-
-        paint.isAntiAlias = true
-
-        canvas?.scale(scale, scale)
-        canvas?.translate(CENTER, CENTER)
-        canvas?.rotate(-siderealAngle * sign(tenMinuteGridStep), 0f, 0f)
-
-        canvas?.drawAnalemma()
-        canvas?.drawMonthlyPosition()
-        canvas?.drawCurrentPosition()
+        canvas?.run {
+            rotate(-siderealAngle * sign(tenMinuteGridStep), 0f, 0f)
+            drawAnalemma()
+            drawMonthlyPosition()
+            drawCurrentPosition()
+        }
     }
 
 
@@ -85,9 +56,9 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
-        path.moveTo(analemma.last().first * CIRCLE_RADIUS, analemma.last().second * CIRCLE_RADIUS)
-        analemma.forEach { (x, y) -> path.lineTo(x * CIRCLE_RADIUS, y * CIRCLE_RADIUS) }
-        this.drawPath(path, paint)
+        analemma.last().let { (x, y) -> path.moveTo(convert(x), convert(y)) }
+        analemma.forEach { (x, y) -> path.lineTo(convert(x), convert(y)) }
+        drawPath(path, paint)
         path.reset()
     }
 
@@ -99,32 +70,21 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         monthlyPositionList.forEachIndexed { month, pos ->
             val label = monthTextList[month]
             val offset = paint.measureText(label)
-            when {
-                pos.first < 0f -> drawText(
-                    label,
-                    pos.first * CIRCLE_RADIUS - 5f - offset,
-                    pos.second * CIRCLE_RADIUS + 5f,
-                    paint
-                )
-                else -> drawText(
-                    label,
-                    pos.first * CIRCLE_RADIUS + 5f,
-                    pos.second * CIRCLE_RADIUS + 5f,
-                    paint
-                )
+            pos.let { (x, y) ->
+                when {
+                    x < 0f -> drawText(label, convert(x) - 5f - offset, convert(y) + 5f, paint)
+                    else -> drawText(label, convert(x) + 5f, convert(y) + 5f, paint)
+                }
+                drawCircle(convert(x), convert(y), 3f, paint)
             }
-            drawCircle(pos.first * CIRCLE_RADIUS, pos.second * CIRCLE_RADIUS, 3f, paint)
         }
     }
 
     private fun Canvas.drawCurrentPosition() {
         paint.color = sunColor
         paint.style = Paint.Style.FILL
-        drawCircle(
-            currentPosition.first * CIRCLE_RADIUS,
-            currentPosition.second * CIRCLE_RADIUS,
-            5f,
-            paint
-        )
+        currentPosition.let { (x, y) ->
+            drawCircle(convert(x), convert(y), 5f, paint)
+        }
     }
 }

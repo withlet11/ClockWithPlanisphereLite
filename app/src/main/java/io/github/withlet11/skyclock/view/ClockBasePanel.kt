@@ -25,28 +25,16 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.View
 import io.github.withlet11.skyclock.R
 import io.github.withlet11.skyclock.model.DateObject
 import kotlin.math.PI
-import kotlin.math.max
-import kotlin.math.min
 
-class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-    companion object {
-        private const val PREFERRED_SIZE = 800
-        private const val CENTER = PREFERRED_SIZE * 0.5f
-    }
-
-    private val paint = Paint()
-
+class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
     var offset = 0f
     var direction = false
     var dateList = listOf<DateObject>()
-    var isZoomed = false
-    private var narrowSideLength = 0
-    private var wideSideLength = 0
 
+    private val paint = Paint().apply { isAntiAlias = true }
     private val bezelColor = context?.getColor(R.color.darkBlue) ?: 0
     private val minuteGridColor = context?.getColor(R.color.gray) ?: 0
     private val datePanelColor = context?.getColor(R.color.lightGray) ?: 0
@@ -56,70 +44,53 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
     private val monthNameColor = context?.getColor(R.color.black) ?: 0
     private val skyBackGroundColor = context?.getColor(R.color.midnightBlue) ?: 0
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        narrowSideLength = min(widthSize, heightSize)
-        wideSideLength = max(widthSize, heightSize)
-        setMeasuredDimension(wideSideLength, wideSideLength)
-    }
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-        val drawAreaSize = if (isZoomed) wideSideLength else narrowSideLength
-        val scale = drawAreaSize.toFloat() / PREFERRED_SIZE
-
-        paint.isAntiAlias = true
-
-        canvas?.scale(scale, scale)
-        canvas?.translate(CENTER, CENTER)
-
-        canvas?.drawBackPanel()
-        canvas?.drawGrid()
-        canvas?.drawDate()
+        canvas?.run {
+            drawBackPanel()
+            drawGrid()
+            drawDate()
+        }
     }
 
     private fun Canvas.drawBackPanel() {
         listOf(
-            0.5f to bezelColor,
-            0.46f to datePanelColor,
-            0.42f to skyBackGroundColor
-        ).forEach { (size, color) ->
-            val r = PREFERRED_SIZE * size
+            BEZEL_RADIUS to bezelColor,
+            DATE_PANEL_RADIUS to datePanelColor,
+            SKY_BACKGROUND_RADIUS to skyBackGroundColor
+        ).forEach { (r, color) ->
             paint.color = color
-            this.drawCircle(0f, 0f, r, paint)
+            drawCircle(0f, 0f, r, paint)
         }
     }
 
     private fun Canvas.drawGrid() {
-        val rectangleSize = PREFERRED_SIZE * 0.028f
-        val dot1radius = PREFERRED_SIZE * 0.010f
-        val dot2radius = PREFERRED_SIZE * 0.006f
-        val intervalOfDoubleRect = PREFERRED_SIZE * 0.01f
+        val rectangleSize = 22f
+        val dot1radius = 8f
+        val dot2radius = 4f
+        val intervalOfDoubleRect = 8f
         val doubleRect1OffsetX = -rectangleSize - intervalOfDoubleRect * 0.5f
         val doubleRect2OffsetX = intervalOfDoubleRect * 0.5f
         val singleRectOffsetX = rectangleSize * 0.5f
-        val offsetY = -PREFERRED_SIZE * 0.46f - rectangleSize
+        val offsetY = -DATE_PANEL_RADIUS - rectangleSize
         val dot1OffsetY = offsetY + rectangleSize * 0.5f
         val dot2OffsetY = offsetY + rectangleSize * 0.5f
 
         paint.color = minuteGridColor
         paint.style = Paint.Style.FILL
         for (i in 0..59) {
-            this.save()
-            this.rotate(i * 6f) // 6 = 360 / 60
+            save()
+            rotate(i * 6f) // 6 = 360 / 60
             when {
                 i == 0 -> {
-                    this.drawRect(
+                    drawRect(
                         doubleRect1OffsetX,
                         offsetY,
                         doubleRect1OffsetX + rectangleSize,
                         offsetY + rectangleSize,
                         paint
                     )
-                    this.drawRect(
+                    drawRect(
                         doubleRect2OffsetX,
                         offsetY,
                         doubleRect2OffsetX + rectangleSize,
@@ -128,7 +99,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
                     )
                 }
                 i % 15 == 0 ->
-                    this.drawRect(
+                    drawRect(
                         -singleRectOffsetX,
                         offsetY,
                         singleRectOffsetX,
@@ -136,34 +107,34 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
                         paint
                     )
                 i % 5 == 0 ->
-                    this.drawCircle(0f, dot1OffsetY, dot1radius, paint)
+                    drawCircle(0f, dot1OffsetY, dot1radius, paint)
                 else ->
-                    this.drawCircle(0f, dot2OffsetY, dot2radius, paint)
+                    drawCircle(0f, dot2OffsetY, dot2radius, paint)
             }
-            this.restore()
+            restore()
         }
     }
 
     private fun Canvas.drawDate() {
-        val circleY = PREFERRED_SIZE * 0.427f
+        val circleY = 341f
         dateList.forEach { date ->
-            this.save()
+            save()
             // angle + 180 because text is drawn at opposite side
-            this.rotate((-360f / dateList.size * date.dayOfYear + offset + 180f) * if (direction) -1f else 1f)
+            rotate((-360f / dateList.size * date.dayOfYear + offset + 180f) * if (direction) -1f else 1f)
 
-            when {
+            val (color, r) = when {
                 date.isToday -> todayGridColor to 4f
                 date.dayOfMonth % 10 == 0 -> dayGridColor to 3f
                 date.dayOfMonth % 5 == 0 -> dayGridColor to 2f
                 else -> dayGridColor to 1f
-            }.let { (color, r) ->
-                paint.style = Paint.Style.FILL
-                paint.color = color
-                this.drawCircle(0f, circleY, r, paint)
             }
 
-            this.drawMonth(date)
-            this.restore()
+            paint.style = Paint.Style.FILL
+            paint.color = color
+            drawCircle(0f, circleY, r, paint)
+
+            drawMonth(date)
+            restore()
         }
     }
 
@@ -174,10 +145,10 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
                 paint.color = monthBorderColor
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 2f
-                val startY = PREFERRED_SIZE * 0.42f
-                val stopY = PREFERRED_SIZE * 0.46f
+                val startY = SKY_BACKGROUND_RADIUS
+                val stopY = DATE_PANEL_RADIUS
                 val offsetRate = PI.toFloat() / if (direction) 365f else -365f
-                this.drawLine(
+                drawLine(
                     startY * offsetRate,
                     startY,
                     stopY * offsetRate,
@@ -188,19 +159,19 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : View(context, at
             15 -> {
                 paint.color = monthNameColor
                 paint.style = Paint.Style.FILL
-                val text = date.monthString
+                val monthName = date.monthString
                 val fontMetrics = paint.fontMetrics
-                val r = PREFERRED_SIZE * 0.445f - (fontMetrics.ascent + fontMetrics.descent) * 0.5f
+                val r = 356f - (fontMetrics.ascent + fontMetrics.descent) * 0.5f
                 val ratio = 180f / PI.toFloat() / r
-                val start = ratio * paint.measureText(text) * 0.5f
-                this.save()
-                this.rotate(start)
-                text.forEach {
-                    this.drawText(it.toString(), 0f, r, paint)
-                    val step = -ratio * paint.measureText(it.toString())
-                    this.rotate(step)
+                val start = ratio * paint.measureText(monthName) * 0.5f
+                save()
+                rotate(start)
+                monthName.forEach { name ->
+                    drawText(name.toString(), 0f, r, paint)
+                    val step = -ratio * paint.measureText(name.toString())
+                    rotate(step)
                 }
-                this.restore()
+                restore()
             }
         }
     }

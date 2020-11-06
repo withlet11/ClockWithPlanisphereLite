@@ -24,69 +24,38 @@ package io.github.withlet11.skyclock.view
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.View
 import io.github.withlet11.skyclock.R
-import kotlin.math.max
-import kotlin.math.min
 
 
-class HorizonPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-    companion object {
-        private const val PREFERRED_SIZE = 800
-        private const val CENTER = PREFERRED_SIZE * 0.5f
-        private const val CIRCLE_RADIUS = PREFERRED_SIZE * 0.4f
-    }
-
-    private val paint = Paint()
-    private val path = Path()
-    private val dottedLine = DashPathEffect(floatArrayOf(2f, 2f), 0f)
-
+class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
     var horizon = listOf<Pair<Float, Float>>()
     var altAzimuth = listOf<List<Pair<Float, Float>?>>()
     var directionLetters = listOf<Triple<String, Float, Float>>()
-    var isZoomed = false
-    private var narrowSideLength = 0
-    private var wideSideLength = 0
 
+    private val paint = Paint().apply { isAntiAlias = true }
+    private val path = Path()
+    private val dottedLine = DashPathEffect(floatArrayOf(2f, 2f), 0f)
     private val horizonColor = context?.getColor(R.color.smoke) ?: 0
     private val altAzimuthLineColor = context?.getColor(R.color.skyBlue) ?: 0
     private val directionLetterColor = context?.getColor(R.color.lightGray) ?: 0
     private val siderealTimeIndicatorColor = context?.getColor(R.color.yellow) ?: 0
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        narrowSideLength = min(widthSize, heightSize)
-        wideSideLength = max(widthSize, heightSize)
-
-        setMeasuredDimension(wideSideLength, wideSideLength)
-    }
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-        val drawAreaSize = if (isZoomed) wideSideLength else narrowSideLength
-        val scale = drawAreaSize.toFloat() / PREFERRED_SIZE
-
-        paint.isAntiAlias = true
-
-        canvas?.scale(scale, scale)
-        canvas?.translate(CENTER, CENTER)
-
-        canvas?.drawHorizon()
-        canvas?.drawAltitudeAndAzimuthLines()
-        canvas?.drawDirectionLetters()
-        canvas?.drawSiderealTimeIndicator()
+        canvas?.run {
+            drawHorizon()
+            drawAltitudeAndAzimuthLines()
+            drawDirectionLetters()
+            drawSiderealTimeIndicator()
+        }
     }
 
     private fun Canvas.drawHorizon() {
         paint.color = horizonColor
         paint.style = Paint.Style.FILL
-        path.moveTo(horizon[0].first * CIRCLE_RADIUS, horizon[0].second * CIRCLE_RADIUS)
-        horizon.forEach { path.lineTo(it.first * CIRCLE_RADIUS, it.second * CIRCLE_RADIUS) }
-        this.drawPath(path, paint)
+        horizon.first().let { (x, y) -> path.moveTo(convert(x), convert(y)) }
+        horizon.forEach { (x, y) -> path.lineTo(convert(x), convert(y)) }
+        drawPath(path, paint)
         path.reset()
     }
 
@@ -97,21 +66,22 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : View(context, attr
         paint.style = Paint.Style.STROKE
         altAzimuth.forEach { list ->
             var isPenDown = false
-            list.forEach {
+            list.forEach { pos ->
                 if (isPenDown) {
-                    if (it == null) {
+                    if (pos == null) {
                         isPenDown = false
                     } else {
-                        path.lineTo(it.first * CIRCLE_RADIUS, it.second * CIRCLE_RADIUS)
+                        val (x, y) = pos
+                        path.lineTo(convert(x), convert(y))
                     }
                 } else {
-                    if (it != null) {
+                    pos?.let { (x, y) ->
                         isPenDown = true
-                        path.moveTo(it.first * CIRCLE_RADIUS, it.second * CIRCLE_RADIUS)
+                        path.moveTo(convert(x), convert(y))
                     }
                 }
             }
-            this.drawPath(path, paint)
+            drawPath(path, paint)
             path.reset()
         }
         paint.pathEffect = null
@@ -122,33 +92,23 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : View(context, attr
         paint.style = Paint.Style.FILL
         paint.textSize = 18f
         val fontMetrics = paint.fontMetrics
-        directionLetters.forEach { triple ->
-            val textWidth = paint.measureText(triple.first)
-            this.drawText(
-                triple.first,
-                triple.second * CIRCLE_RADIUS - textWidth * 0.5f,
-                triple.third * CIRCLE_RADIUS + textWidth * 0.5f,
-                paint
-            )
+        directionLetters.forEach { (letter, x, y) ->
+            val textWidth = paint.measureText(letter)
+            drawText(letter, convert(x) - textWidth * 0.5f, convert(y) + textWidth * 0.5f, paint)
         }
     }
 
+    /**
+     * Draw a triangle as an indicator of sidereal time
+     */
     private fun Canvas.drawSiderealTimeIndicator() {
         paint.color = siderealTimeIndicatorColor
         paint.style = Paint.Style.FILL
-        /*
-        this.drawCircle(
-            0f,
-            -PREFERRED_SIZE * 0.406f,
-            4f,
-            paint
-        )
-         */
-        path.moveTo(0f, -PREFERRED_SIZE * 0.409f)
-        path.lineTo(5f, -PREFERRED_SIZE * 0.397f)
-        path.lineTo(-5f, -PREFERRED_SIZE * 0.397f)
-        path.lineTo(0f, -PREFERRED_SIZE * 0.409f)
-        this.drawPath(path, paint)
+        path.moveTo(0f, -327f)
+        path.lineTo(5f, -318f)
+        path.lineTo(-5f, -318f)
+        path.lineTo(0f, -327f)
+        drawPath(path, paint)
         path.reset()
     }
 }

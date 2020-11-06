@@ -24,87 +24,55 @@ package io.github.withlet11.skyclock.view
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.view.View
 import io.github.withlet11.skyclock.R
 import io.github.withlet11.skyclock.model.ConstellationLineGeometry
 import io.github.withlet11.skyclock.model.StarGeometry
 import kotlin.math.*
 
 
-class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-    companion object {
-        private const val PREFERRED_SIZE = 800
-        private const val CENTER = PREFERRED_SIZE * 0.5f
-        private const val CIRCLE_RADIUS = PREFERRED_SIZE * 0.4f
-    }
-
-    private val paint = Paint()
-    private val path = Path()
-
+class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
     var starGeometryList = listOf<StarGeometry>()
     var constellationLineList = listOf<ConstellationLineGeometry>()
     var equatorial = listOf<Pair<Int, Float>>()
     var ecliptic = listOf<Pair<Float, Float>>()
     var siderealAngle = 0f
     var tenMinuteGridStep = 180f / 72f
-    var isZoomed = false
-    private var narrowSideLength = 0
-    private var wideSideLength = 0
 
+    private val paint = Paint().apply { isAntiAlias = true }
+    private val path = Path()
     private val equatorColor = context?.getColor(R.color.raspberry) ?: 0
-    private val latitudeLineColor = context?.getColor(R.color.lightGray) ?: 0
+    private val declinationLineColor = context?.getColor(R.color.lightGray) ?: 0
     private val eclipticColor = context?.getColor(R.color.lemon) ?: 0
     private val starColor = context?.getColor(R.color.lightGray) ?: 0
     private val constellationLineColor = context?.getColor(R.color.lightGray) ?: 0
     private val rectAscensionLineColor = context?.getColor(R.color.lightGray) ?: 0
     private val rectAscensionRing = context?.getColor(R.color.lightGray) ?: 0
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-        narrowSideLength = min(widthSize, heightSize)
-        wideSideLength = max(widthSize, heightSize)
-        setMeasuredDimension(wideSideLength, wideSideLength)
-    }
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-        val drawAreaSize = if (isZoomed) wideSideLength else narrowSideLength
-        val scale = drawAreaSize.toFloat() / PREFERRED_SIZE
-
-        paint.isAntiAlias = true
-
-        canvas?.scale(scale, scale)
-        canvas?.translate(CENTER, CENTER)
-        canvas?.rotate(-siderealAngle * sign(tenMinuteGridStep), 0f, 0f)
-
-        canvas?.drawEquatorial()
-        canvas?.drawEcliptic()
-        canvas?.drawStars()
-        canvas?.drawConstellationLines()
-        canvas?.drawRectAscensionLines()
-        canvas?.drawRectAscensionRing()
+        canvas?.run {
+            rotate(-siderealAngle * sign(tenMinuteGridStep), 0f, 0f)
+            drawEquatorial()
+            drawEcliptic()
+            drawStars()
+            drawConstellationLines()
+            drawRectAscensionLines()
+            drawRectAscensionRing()
+        }
     }
 
     private fun Canvas.drawEquatorial() {
-        equatorial.forEach {
-            if (it.first == 0) {
+        equatorial.forEach { (index, radius) ->
+            if (index == 0) {
                 paint.color = equatorColor
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 1f
             } else {
-                paint.color = latitudeLineColor
+                paint.color = declinationLineColor
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 0.75f
             }
-            this.drawOval(
-                -it.second * CIRCLE_RADIUS, -it.second * CIRCLE_RADIUS,
-                it.second * CIRCLE_RADIUS, it.second * CIRCLE_RADIUS,
-                paint
-            )
+            drawCircle(0f, 0f, convert(radius), paint)
         }
     }
 
@@ -112,36 +80,25 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
-        path.moveTo(ecliptic[0].first * CIRCLE_RADIUS, ecliptic[0].second * CIRCLE_RADIUS)
-        ecliptic.forEach { path.lineTo(it.first * CIRCLE_RADIUS, it.second * CIRCLE_RADIUS) }
-        this.drawPath(path, paint)
+        ecliptic.last().let { (x, y) -> path.moveTo(convert(x), convert(y)) }
+        ecliptic.forEach { (x, y) -> path.lineTo(convert(x), convert(y)) }
+        drawPath(path, paint)
         path.reset()
     }
 
     private fun Canvas.drawStars() {
         paint.color = starColor
         paint.style = Paint.Style.FILL
-        starGeometryList.forEach {
-            this.drawCircle(
-                it.x * CIRCLE_RADIUS,
-                it.y * CIRCLE_RADIUS,
-                it.r,
-                paint
-            )
+        starGeometryList.forEach { (x, y, size) ->
+            drawCircle(convert(x), convert(y), size, paint)
         }
     }
 
     private fun Canvas.drawConstellationLines() {
         paint.strokeWidth = 1f
         paint.color = constellationLineColor
-        constellationLineList.forEach {
-            this.drawLine(
-                it.x1 * CIRCLE_RADIUS,
-                it.y1 * CIRCLE_RADIUS,
-                it.x2 * CIRCLE_RADIUS,
-                it.y2 * CIRCLE_RADIUS,
-                paint
-            )
+        constellationLineList.forEach { (x1, y1, x2, y2) ->
+            drawLine(convert(x1), convert(y1), convert(x2), convert(y2), paint)
         }
     }
 
@@ -150,9 +107,9 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         paint.color = rectAscensionLineColor
         for (i in 1..6) {
             val angle = i / 6.0 * PI
-            val x = cos(angle).toFloat() * CIRCLE_RADIUS
-            val y = sin(angle).toFloat() * CIRCLE_RADIUS
-            this.drawLine(-x, -y, x, y, paint)
+            val x = convert(cos(angle).toFloat())
+            val y = convert(sin(angle).toFloat())
+            drawLine(-x, -y, x, y, paint)
         }
     }
 
@@ -163,32 +120,25 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val fontMetrics = paint.fontMetrics
 
         for (i in 0..143) {
-            this.save()
+            save()
             // angle + 180 because text is drawn at opposite side
-            this.rotate(i * tenMinuteGridStep + 180f)
+            rotate(i * tenMinuteGridStep + 180f)
 
             when {
                 i % 6 == 0 -> {
                     val text = (i / 6).toString()
                     val textWidth = paint.measureText(text)
                     // positive height means opposite side
-                    this.drawText(
+                    drawText(
                         text,
                         -textWidth * 0.5f,
-                        -fontMetrics.descent + PREFERRED_SIZE * 0.42f,
+                        -fontMetrics.descent + SKY_BACKGROUND_RADIUS,
                         paint
                     )
                 }
-                else -> {
-                    this.drawCircle(
-                        0f,
-                        PREFERRED_SIZE * 0.408f,
-                        2f,
-                        paint
-                    )
-                }
+                else -> drawCircle(0f, 326f, 2f, paint)
             }
-            this.restore()
+            restore()
         }
     }
 }
