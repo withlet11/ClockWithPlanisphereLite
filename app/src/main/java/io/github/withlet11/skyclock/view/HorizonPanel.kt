@@ -53,8 +53,8 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
     private fun Canvas.drawHorizon() {
         paint.color = horizonColor
         paint.style = Paint.Style.FILL
-        horizon.first().let { (x, y) -> path.moveTo(convert(x), convert(y)) }
-        horizon.forEach { (x, y) -> path.lineTo(convert(x), convert(y)) }
+        horizon.first().let { (x, y) -> path.moveTo(x.toCanvasPos(), y.toCanvasPos()) }
+        horizon.forEach { (x, y) -> path.lineTo(x.toCanvasPos(), y.toCanvasPos()) }
         drawPath(path, paint)
         path.reset()
     }
@@ -72,12 +72,12 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
                         isPenDown = false
                     } else {
                         val (x, y) = pos
-                        path.lineTo(convert(x), convert(y))
+                        path.lineTo(x.toCanvasPos(), y.toCanvasPos())
                     }
                 } else {
                     pos?.let { (x, y) ->
                         isPenDown = true
-                        path.moveTo(convert(x), convert(y))
+                        path.moveTo(x.toCanvasPos(), y.toCanvasPos())
                     }
                 }
             }
@@ -94,7 +94,12 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
         val fontMetrics = paint.fontMetrics
         directionLetters.forEach { (letter, x, y) ->
             val textWidth = paint.measureText(letter)
-            drawText(letter, convert(x) - textWidth * 0.5f, convert(y) + textWidth * 0.5f, paint)
+            drawText(
+                letter,
+                x.toCanvasPos() - textWidth * 0.5f,
+                y.toCanvasPos() + textWidth * 0.5f,
+                paint
+            )
         }
     }
 

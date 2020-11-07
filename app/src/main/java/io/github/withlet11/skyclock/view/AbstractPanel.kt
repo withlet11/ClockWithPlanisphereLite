@@ -35,7 +35,7 @@ abstract class AbstractPanel(context: Context?, attrs: AttributeSet?) : View(con
         const val DATE_PANEL_RADIUS = 368f
         const val SKY_BACKGROUND_RADIUS = 336f
 
-        fun convert(f: Float): Float = f * CIRCLE_RADIUS
+        fun Float.toCanvasPos(): Float = this * CIRCLE_RADIUS
     }
 
     var isZoomed = false

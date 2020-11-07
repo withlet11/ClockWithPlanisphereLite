@@ -72,7 +72,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 0.75f
             }
-            drawCircle(0f, 0f, convert(radius), paint)
+            drawCircle(0f, 0f, radius.toCanvasPos(), paint)
         }
     }
 
@@ -80,8 +80,8 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
-        ecliptic.last().let { (x, y) -> path.moveTo(convert(x), convert(y)) }
-        ecliptic.forEach { (x, y) -> path.lineTo(convert(x), convert(y)) }
+        ecliptic.last().let { (x, y) -> path.moveTo(x.toCanvasPos(), y.toCanvasPos()) }
+        ecliptic.forEach { (x, y) -> path.lineTo(x.toCanvasPos(), y.toCanvasPos()) }
         drawPath(path, paint)
         path.reset()
     }
@@ -90,7 +90,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = starColor
         paint.style = Paint.Style.FILL
         starGeometryList.forEach { (x, y, size) ->
-            drawCircle(convert(x), convert(y), size, paint)
+            drawCircle(x.toCanvasPos(), y.toCanvasPos(), size, paint)
         }
     }
 
@@ -98,7 +98,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.strokeWidth = 1f
         paint.color = constellationLineColor
         constellationLineList.forEach { (x1, y1, x2, y2) ->
-            drawLine(convert(x1), convert(y1), convert(x2), convert(y2), paint)
+            drawLine(x1.toCanvasPos(), y1.toCanvasPos(), x2.toCanvasPos(), y2.toCanvasPos(), paint)
         }
     }
 
@@ -107,8 +107,8 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = rectAscensionLineColor
         for (i in 1..6) {
             val angle = i / 6.0 * PI
-            val x = convert(cos(angle).toFloat())
-            val y = convert(sin(angle).toFloat())
+            val x = cos(angle).toFloat().toCanvasPos()
+            val y = sin(angle).toFloat().toCanvasPos()
             drawLine(-x, -y, x, y, paint)
         }
     }

@@ -77,6 +77,14 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     private var clickCount = 0
     private var previousClickTime = 0L
 
+    // visibility
+    private var isClockHandsVisible
+        get() = locationChangeSubject?.isClockHandsVisible ?: true
+        set(value) {
+            clockHandsPanel.isVisible = value
+            locationChangeSubject?.isClockHandsVisible = value
+        }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         // set this fragment to subject as an observer
@@ -103,6 +111,7 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         val args = arguments
         val latitude = args?.getDouble("LATITUDE") ?: 45.0
         val longitude = args?.getDouble("LONGITUDE") ?: 0.0
+        clockHandsPanel.isVisible = args?.getBoolean("CLOCK_HANDS_VISIBILITY") ?: true
 
         viewModel = prepareViewModel(activity?.applicationContext!!, latitude, longitude)
 
@@ -120,7 +129,7 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         super.onResume()
         changeLocation(viewModel.latitude, viewModel.longitude)
         periodicalUpdater.timerSet()
-        updateClock()
+        // updateClock()
     }
 
     override fun onPause() {
@@ -133,10 +142,10 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         super.onDestroyView()
     }
 
+    /**
+     * set OnClickListener and OnTouchListener to [clockHandsPanel]
+     */
     private fun setOnTapListenerToPanel() {
-        /**
-         * set OnClickListener and OnTouchListener to [clockHandsPanel]
-         */
         clockHandsPanel.setOnClickListener {
             if (clickCount > 0 && SystemClock.elapsedRealtime() - previousClickTime < 200L) {
                 isZoomed = !isZoomed
@@ -145,6 +154,11 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
             } else {
                 clickCount = 1
                 previousClickTime = SystemClock.elapsedRealtime()
+                if (clockHandsPanel.isCenter(firstActionX to firstActionY)) {
+                    println("X: ${firstActionX + clockHandsPanel.scrollX}, Y, ${firstActionY + clockHandsPanel.scrollY}")
+                    clickCount = 0
+                    isClockHandsVisible = !isClockHandsVisible
+                }
             }
         }
 
@@ -182,10 +196,10 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         }
     }
 
+    /**
+     * get view geometries after view is created or view geometries is changed
+     */
     private fun setViewObserver() {
-        /**
-         * get view geometries after view is created or view geometries is changed
-         */
         val observer = clockHandsPanel.viewTreeObserver
         observer.addOnGlobalLayoutListener {
             adjustFrameLayoutPosition()
@@ -193,17 +207,17 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         }
     }
 
+    /**
+     * set [PeriodicalUpdater] as a periodical updater
+     */
     private fun setPeriodicalUpdater() {
-        /**
-         * set [PeriodicalUpdater] as a periodical updater
-         */
         periodicalUpdater = PeriodicalUpdater(this)
     }
 
+    /**
+     * get geometries of [clockHandsPanel] and adjust positions of [clockFrame] and panels
+     */
     private fun adjustFrameLayoutPosition() {
-        /**
-         * get geometries of [clockHandsPanel] and adjust positions of [clockFrame] and panels
-         */
         with(clockHandsPanel) {
             val totalDifference = wideSideLength - narrowSideLength
             val halfOfDifference = totalDifference / 2
@@ -244,10 +258,10 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         }
     }
 
+    /**
+     * calculate scroll position from touch position, and change positions of panels
+     */
     private fun scrollImage(endX: Float, endY: Float) {
-        /**
-         * calculate scroll position from touch position, and change positions of panels
-         */
         val x = max(
             min(clockBasePanel.scrollX + (previousActionX - endX).toInt(), scrollableHorizonMax),
             scrollableHorizonMin
@@ -344,18 +358,18 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         clockHandsPanel.invalidate()
     }
 
+    /**
+     * implementation of [MainActivity.LocationChangeObserver.onLocationChange]
+     * receive location change signal from MainActivity
+     */
     override fun onLocationChange(latitude: Double, longitude: Double) {
-        /**
-         * implementation of [MainActivity.LocationChangeObserver.onLocationChange]
-         * receive location change signal from MainActivity
-         */
         changeLocation(latitude, longitude)
     }
 
+    /**
+     * set location to [viewModel] and [horizonPanel]
+     */
     private fun changeLocation(latitude: Double, longitude: Double) {
-        /**
-         * set location to [viewModel] and [horizonPanel]
-         */
         viewModel.changeLocation(latitude, longitude)
         setHorizonPanel()
     }

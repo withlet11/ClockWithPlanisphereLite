@@ -35,6 +35,7 @@ import io.github.withlet11.skyclock.fragment.SouthernSkyClockFragment
 class MainActivity : AppCompatActivity() {
     var latitude = 0.0
     private var longitude = 0.0
+    var isClockHandsVisible = true
 
     interface LocationChangeObserver {
         fun onLocationChange(latitude: Double, longitude: Double)
@@ -92,6 +93,7 @@ class MainActivity : AppCompatActivity() {
                     arguments = Bundle().apply {
                         putDouble("LATITUDE", latitude)
                         putDouble("LONGITUDE", longitude)
+                        putBoolean("CLOCK_HANDS_VISIBILITY", isClockHandsVisible)
                     }
                 }
 
@@ -108,10 +110,11 @@ class MainActivity : AppCompatActivity() {
             arguments = Bundle().apply {
                 putDouble("LATITUDE", latitude)
                 putDouble("LONGITUDE", longitude)
+                putBoolean("CLOCK_HANDS_VISIBILITY", isClockHandsVisible)
             }
         }
 
-        fragmentTransaction.add(R.id.container, fragment)
+        fragmentTransaction.replace(R.id.container, fragment)
         fragmentTransaction.commit()
     }
 
@@ -141,8 +144,8 @@ class MainActivity : AppCompatActivity() {
         val previous = getSharedPreferences("observation_position", Context.MODE_PRIVATE)
 
         try {
-            latitude = previous.getFloat("latitude", 0F).toDouble()
-            longitude = previous.getFloat("longitude", 0F).toDouble()
+            latitude = previous.getFloat("latitude", 0f).toDouble()
+            longitude = previous.getFloat("longitude", 0f).toDouble()
         } catch (e: ClassCastException) {
             latitude = 0.0
             longitude = 0.0

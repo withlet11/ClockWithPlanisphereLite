@@ -56,8 +56,8 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
-        analemma.last().let { (x, y) -> path.moveTo(convert(x), convert(y)) }
-        analemma.forEach { (x, y) -> path.lineTo(convert(x), convert(y)) }
+        analemma.last().let { (x, y) -> path.moveTo(x.toCanvasPos(), y.toCanvasPos()) }
+        analemma.forEach { (x, y) -> path.lineTo(x.toCanvasPos(), y.toCanvasPos()) }
         drawPath(path, paint)
         path.reset()
     }
@@ -72,10 +72,15 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
             val offset = paint.measureText(label)
             pos.let { (x, y) ->
                 when {
-                    x < 0f -> drawText(label, convert(x) - 5f - offset, convert(y) + 5f, paint)
-                    else -> drawText(label, convert(x) + 5f, convert(y) + 5f, paint)
+                    x < 0f -> drawText(
+                        label,
+                        x.toCanvasPos() - 5f - offset,
+                        y.toCanvasPos() + 5f,
+                        paint
+                    )
+                    else -> drawText(label, x.toCanvasPos() + 5f, y.toCanvasPos() + 5f, paint)
                 }
-                drawCircle(convert(x), convert(y), 3f, paint)
+                drawCircle(x.toCanvasPos(), y.toCanvasPos(), 3f, paint)
             }
         }
     }
@@ -84,7 +89,7 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = sunColor
         paint.style = Paint.Style.FILL
         currentPosition.let { (x, y) ->
-            drawCircle(convert(x), convert(y), 5f, paint)
+            drawCircle(x.toCanvasPos(), y.toCanvasPos(), 5f, paint)
         }
     }
 }
