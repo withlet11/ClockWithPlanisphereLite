@@ -30,8 +30,8 @@ import io.github.withlet11.skyclock.model.DateObject
 import kotlin.math.PI
 
 class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
-    var offset = 0f
-    var direction = false
+    private var offset = 0f
+    private var direction = false
     var dateList = listOf<DateObject>()
 
     private val paint = Paint().apply { isAntiAlias = true }
@@ -174,5 +174,11 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
                 restore()
             }
         }
+    }
+
+    fun set(offset: Float, direction: Boolean, dateList: List<DateObject>) {
+        this.offset = offset
+        this.direction = direction
+        this.dateList = dateList
     }
 }

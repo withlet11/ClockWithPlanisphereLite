@@ -14,7 +14,7 @@ API 26 (Android 8.0) or later
 * **Constellation lines:** Constellation lines are displayed.
 * **The Sun and Analemma:** The position of the Sun is displayed with analemma.
 * **Astronomical Twilight:** You can check astronomical twilight time with altitude line of &minus;18°.
-* **Automatical Update:** The view is updated automatically.
+* **Automatic Update:** The view is updated automatically.
 
 ## Usage
 
@@ -24,5 +24,5 @@ API 26 (Android 8.0) or later
 ### To switch zoom in/out
 * Double tap on the screen.
 
-### To adjust the postion of clock
+### To adjust the position of clock
 * Swipe the screen.

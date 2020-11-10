@@ -4,9 +4,7 @@ import java.lang.Math.toDegrees
 import java.lang.Math.toRadians
 import kotlin.math.*
 
-/**
- *
- */
+/** This class calculates the position of the Sun, and provide geometries of analemma. */
 class SunModel(private val skyModel: AbstractSkyModel) {
     private var maxAngle = 0.0
 
@@ -21,12 +19,12 @@ class SunModel(private val skyModel: AbstractSkyModel) {
     var monthlyPositionList = listOf<Pair<Float, Float>>()
 
     /**
-     * calculate sun position
+     * Calculates the sun position.
      * @param jc Julian centuries
      */
     fun getSunPosition(jc: Double): Pair<Float, Float> {
         // orbital parameters
-        val epoch = LocalTime.getJc(2000, 1, 1, 12 * 60 * 60) // J2000.0
+        val epoch = SolarAndSiderealTime.getJc(2000, 1, 1, 12 * 60 * 60) // J2000.0
         val eccentricity = 0.0167086 // e
         val inclination = toRadians(23.43658) // axial tilt
         val longitudeOfPerihelion = toRadians(102.9 + 180.0) // ϖ
@@ -51,19 +49,17 @@ class SunModel(private val skyModel: AbstractSkyModel) {
         )
     }
 
-    /**
-     * create analemma geometry list [analemmaGeometryList]
-     */
+    /** creates analemma geometry list [analemmaGeometryList] */
     private fun getAnalemma(): List<Pair<Float, Float>> {
         return List(25) { it * 15 }.map { dayOfYear ->
-            val jc = LocalTime.getJc(2020, 1, 1, 0) + dayOfYear / 36525.0
+            val jc = SolarAndSiderealTime.getJc(2020, 1, 1, 0) + dayOfYear / 36525.0
             getSunPosition(jc)
         }
     }
 
     private fun createMonthlyPositionList(): List<Pair<Float, Float>> {
         return listOf(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334).map { dayOfYear ->
-            val jc = LocalTime.getJc(2020, 1, 1, 0) + dayOfYear / 36525.0
+            val jc = SolarAndSiderealTime.getJc(2020, 1, 1, 0) + dayOfYear / 36525.0
             getSunPosition(jc)
         }
     }
@@ -75,7 +71,7 @@ class SunModel(private val skyModel: AbstractSkyModel) {
 
     companion object {
         /**
-         * reduced latitude --> geocentric latitude
+         * Reduced latitude --> geocentric latitude
          * @return geocentric latitude
          */
         private fun redLat2GeoLat(ratio: Double, theta: Double): Double {
@@ -98,7 +94,7 @@ class SunModel(private val skyModel: AbstractSkyModel) {
             (1..3).fold(ma) { ea, _ -> ma + e * sin(ea) }
 
         /**
-         * eccentric anomaly --> true anomaly
+         * Eccentric anomaly --> true anomaly
          * @param e eccentricity
          * @param ea eccentric anomaly
          * @return true anomaly

@@ -22,11 +22,17 @@
 package io.github.withlet11.skyclock.model
 
 import android.content.Context
+import kotlin.math.sign
 
-class SkyViewModel(context: Context, private val skyModel: AbstractSkyModel, latitude: Double, longitude: Double) {
+class SkyViewModel(
+    context: Context,
+    private val skyModel: AbstractSkyModel,
+    latitude: Double,
+    longitude: Double
+) {
     private val horizonModel = HorizonModel(skyModel)
     private val sunModel = SunModel(skyModel)
-    private val localTime = LocalTime()
+    private val localTime = SolarAndSiderealTime()
 
     var latitude = 0.0
         private set(value) {
@@ -54,8 +60,8 @@ class SkyViewModel(context: Context, private val skyModel: AbstractSkyModel, lat
     val siderealAngle: Float
         get() = localTime.siderealAngle
 
-    val localAngle: Float
-        get() = localTime.localAngle
+    val solarAngle: Float
+        get() = localTime.solarAngle
 
     val dateList: List<DateObject>
         get() = localTime.dateList
@@ -117,5 +123,9 @@ class SkyViewModel(context: Context, private val skyModel: AbstractSkyModel, lat
     fun changeLocation(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
+    }
+
+    fun setDateWithFixedSiderealTime(rotate: Float) {
+        localTime.setSolarTimeWithFixedSiderealTime(rotate * sign(tenMinuteGridStep))
     }
 }

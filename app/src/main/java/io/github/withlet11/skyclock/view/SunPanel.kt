@@ -27,14 +27,16 @@ import android.util.AttributeSet
 import io.github.withlet11.skyclock.R
 import kotlin.math.*
 
-
+/**
+ * This class is a view that show the Sun and analemma.
+ */
 class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
-    var analemma = listOf<Pair<Float, Float>>()
-    var monthlyPositionList = listOf<Pair<Float, Float>>()
-    var currentPosition = 0f to 0f
-
-    var siderealAngle = 0f
-    var tenMinuteGridStep = 180f / 72f
+    private var analemma = listOf<Pair<Float, Float>>()
+    private var monthlyPositionList = listOf<Pair<Float, Float>>()
+    private var currentPosition = 0f to 0f
+    var hourAngle = 0f
+    private val rotateAngle: Float get() = -hourAngle * sign(tenMinuteGridStep)
+    private var tenMinuteGridStep = 180f / 72f
 
     private val paint = Paint().apply { isAntiAlias = true }
     private val path = Path()
@@ -44,20 +46,19 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.run {
-            rotate(-siderealAngle * sign(tenMinuteGridStep), 0f, 0f)
+            rotate(rotateAngle, 0f, 0f)
             drawAnalemma()
             drawMonthlyPosition()
             drawCurrentPosition()
         }
     }
 
-
     private fun Canvas.drawAnalemma() {
         paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
-        analemma.last().let { (x, y) -> path.moveTo(x.toCanvasPos(), y.toCanvasPos()) }
-        analemma.forEach { (x, y) -> path.lineTo(x.toCanvasPos(), y.toCanvasPos()) }
+        analemma.last().let { (x, y) -> path.moveTo(x.toCanvas(), y.toCanvas()) }
+        analemma.forEach { (x, y) -> path.lineTo(x.toCanvas(), y.toCanvas()) }
         drawPath(path, paint)
         path.reset()
     }
@@ -74,13 +75,13 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
                 when {
                     x < 0f -> drawText(
                         label,
-                        x.toCanvasPos() - 5f - offset,
-                        y.toCanvasPos() + 5f,
+                        x.toCanvas() - 5f - offset,
+                        y.toCanvas() + 5f,
                         paint
                     )
-                    else -> drawText(label, x.toCanvasPos() + 5f, y.toCanvasPos() + 5f, paint)
+                    else -> drawText(label, x.toCanvas() + 5f, y.toCanvas() + 5f, paint)
                 }
-                drawCircle(x.toCanvasPos(), y.toCanvasPos(), 3f, paint)
+                drawCircle(x.toCanvas(), y.toCanvas(), 3f, paint)
             }
         }
     }
@@ -89,7 +90,38 @@ class SunPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = sunColor
         paint.style = Paint.Style.FILL
         currentPosition.let { (x, y) ->
-            drawCircle(x.toCanvasPos(), y.toCanvasPos(), 5f, paint)
+            drawCircle(x.toCanvas(), y.toCanvas(), 5f, paint)
         }
+    }
+
+    /**
+     * Checks if a position is on analemma.
+     * @param posOnFragment a position on the fragment
+     * @return true if a position is on analemma
+     */
+    fun isOnAnalemma(posOnFragment: Pair<Float, Float>): Boolean {
+        val analemmaPosition = currentPosition.toAbsoluteXY(-hourAngle * sign(tenMinuteGridStep))
+        return posOnFragment.toCanvasXY().isNear(analemmaPosition)
+    }
+
+    fun set(
+        analemma: List<Pair<Float, Float>>,
+        monthlyPositionList: List<Pair<Float, Float>>,
+        currentPosition: Pair<Float, Float>,
+        tenMinuteGridStep: Float
+
+    ) {
+        this.analemma = analemma
+        this.monthlyPositionList = monthlyPositionList
+        this.currentPosition = currentPosition
+        this.tenMinuteGridStep = tenMinuteGridStep
+    }
+
+    fun setHourAngleAndCurrentPosition(
+        hourAngle: Float,
+        currentPosition: Pair<Float, Float>
+    ) {
+        this.hourAngle = hourAngle
+        this.currentPosition = currentPosition
     }
 }

@@ -26,12 +26,11 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import io.github.withlet11.skyclock.R
-import kotlin.math.abs
 
 class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
-    var hour = 0
-    var minute = 0
-    var second = 0
+    private var hour = 0
+    private var minute = 0
+    private var second = 0
     var isVisible = true
 
     private val paint = Paint().apply { isAntiAlias = true }
@@ -81,16 +80,12 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
         restore()
     }
 
-    fun isCenter(position: Pair<Float, Float>): Boolean {
-        val centerPosition =
-            (if (isZoomed) wideSideLength else narrowSideLength).let { it / 2 to it / 2 }
+    fun isCenter(position: Pair<Float, Float>): Boolean =
+        position.toCanvasXY().isNear(centerPosition)
 
-        return position.toCanvasXY().isNear(centerPosition)
+    fun set(hour: Int, minute: Int, second: Int) {
+        this.hour = hour
+        this.minute = minute
+        this.second = second
     }
-
-    private fun Pair<Float, Float>.toCanvasXY(): Pair<Float, Float> =
-        first + scrollX to second + scrollY
-
-    private fun Pair<Float, Float>.isNear(other: Pair<Int, Int>): Boolean =
-        abs(first - other.first) < 50 && abs(second - other.second) < 50
 }

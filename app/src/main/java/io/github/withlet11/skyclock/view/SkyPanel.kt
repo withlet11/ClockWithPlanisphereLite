@@ -31,12 +31,12 @@ import kotlin.math.*
 
 
 class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
-    var starGeometryList = listOf<StarGeometry>()
-    var constellationLineList = listOf<ConstellationLineGeometry>()
-    var equatorial = listOf<Pair<Int, Float>>()
-    var ecliptic = listOf<Pair<Float, Float>>()
+    private var starGeometryList = listOf<StarGeometry>()
+    private var constellationLineList = listOf<ConstellationLineGeometry>()
+    private var equatorial = listOf<Pair<Int, Float>>()
+    private var ecliptic = listOf<Pair<Float, Float>>()
     var siderealAngle = 0f
-    var tenMinuteGridStep = 180f / 72f
+    private var tenMinuteGridStep = 180f / 72f
 
     private val paint = Paint().apply { isAntiAlias = true }
     private val path = Path()
@@ -72,7 +72,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 0.75f
             }
-            drawCircle(0f, 0f, radius.toCanvasPos(), paint)
+            drawCircle(0f, 0f, radius.toCanvas(), paint)
         }
     }
 
@@ -80,8 +80,8 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = eclipticColor
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 1f
-        ecliptic.last().let { (x, y) -> path.moveTo(x.toCanvasPos(), y.toCanvasPos()) }
-        ecliptic.forEach { (x, y) -> path.lineTo(x.toCanvasPos(), y.toCanvasPos()) }
+        ecliptic.last().let { (x, y) -> path.moveTo(x.toCanvas(), y.toCanvas()) }
+        ecliptic.forEach { (x, y) -> path.lineTo(x.toCanvas(), y.toCanvas()) }
         drawPath(path, paint)
         path.reset()
     }
@@ -90,7 +90,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = starColor
         paint.style = Paint.Style.FILL
         starGeometryList.forEach { (x, y, size) ->
-            drawCircle(x.toCanvasPos(), y.toCanvasPos(), size, paint)
+            drawCircle(x.toCanvas(), y.toCanvas(), size, paint)
         }
     }
 
@@ -98,7 +98,7 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.strokeWidth = 1f
         paint.color = constellationLineColor
         constellationLineList.forEach { (x1, y1, x2, y2) ->
-            drawLine(x1.toCanvasPos(), y1.toCanvasPos(), x2.toCanvasPos(), y2.toCanvasPos(), paint)
+            drawLine(x1.toCanvas(), y1.toCanvas(), x2.toCanvas(), y2.toCanvas(), paint)
         }
     }
 
@@ -107,8 +107,8 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         paint.color = rectAscensionLineColor
         for (i in 1..6) {
             val angle = i / 6.0 * PI
-            val x = cos(angle).toFloat().toCanvasPos()
-            val y = sin(angle).toFloat().toCanvasPos()
+            val x = cos(angle).toFloat().toCanvas()
+            val y = sin(angle).toFloat().toCanvas()
             drawLine(-x, -y, x, y, paint)
         }
     }
@@ -140,5 +140,19 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
             }
             restore()
         }
+    }
+
+    fun set(
+        starGeometryList: List<StarGeometry>,
+        constellationLineGeometry: List<ConstellationLineGeometry>,
+        equatorial: List<Pair<Int, Float>>,
+        ecliptic: List<Pair<Float, Float>>,
+        tenMinuteGridStep: Float
+    ) {
+        this.starGeometryList = starGeometryList
+        this.constellationLineList = constellationLineGeometry
+        this.equatorial = equatorial
+        this.ecliptic = ecliptic
+        this.tenMinuteGridStep = tenMinuteGridStep
     }
 }

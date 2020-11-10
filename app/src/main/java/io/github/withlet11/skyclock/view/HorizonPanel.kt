@@ -28,9 +28,9 @@ import io.github.withlet11.skyclock.R
 
 
 class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
-    var horizon = listOf<Pair<Float, Float>>()
-    var altAzimuth = listOf<List<Pair<Float, Float>?>>()
-    var directionLetters = listOf<Triple<String, Float, Float>>()
+    private var horizon = listOf<Pair<Float, Float>>()
+    private var altAzimuth = listOf<List<Pair<Float, Float>?>>()
+    private var directionLetters = listOf<Triple<String, Float, Float>>()
 
     private val paint = Paint().apply { isAntiAlias = true }
     private val path = Path()
@@ -53,8 +53,8 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
     private fun Canvas.drawHorizon() {
         paint.color = horizonColor
         paint.style = Paint.Style.FILL
-        horizon.first().let { (x, y) -> path.moveTo(x.toCanvasPos(), y.toCanvasPos()) }
-        horizon.forEach { (x, y) -> path.lineTo(x.toCanvasPos(), y.toCanvasPos()) }
+        horizon.first().let { (x, y) -> path.moveTo(x.toCanvas(), y.toCanvas()) }
+        horizon.forEach { (x, y) -> path.lineTo(x.toCanvas(), y.toCanvas()) }
         drawPath(path, paint)
         path.reset()
     }
@@ -72,12 +72,12 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
                         isPenDown = false
                     } else {
                         val (x, y) = pos
-                        path.lineTo(x.toCanvasPos(), y.toCanvasPos())
+                        path.lineTo(x.toCanvas(), y.toCanvas())
                     }
                 } else {
                     pos?.let { (x, y) ->
                         isPenDown = true
-                        path.moveTo(x.toCanvasPos(), y.toCanvasPos())
+                        path.moveTo(x.toCanvas(), y.toCanvas())
                     }
                 }
             }
@@ -96,15 +96,15 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
             val textWidth = paint.measureText(letter)
             drawText(
                 letter,
-                x.toCanvasPos() - textWidth * 0.5f,
-                y.toCanvasPos() + textWidth * 0.5f,
+                x.toCanvas() - textWidth * 0.5f,
+                y.toCanvas() + textWidth * 0.5f,
                 paint
             )
         }
     }
 
     /**
-     * Draw a triangle as an indicator of sidereal time
+     * Draws a triangle as an indicator of sidereal time.
      */
     private fun Canvas.drawSiderealTimeIndicator() {
         paint.color = siderealTimeIndicatorColor
@@ -115,5 +115,16 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
         path.lineTo(0f, -327f)
         drawPath(path, paint)
         path.reset()
+    }
+
+    fun set(
+        horizon: List<Pair<Float, Float>>,
+        altAzimuth: List<List<Pair<Float, Float>?>>,
+        directionLetters: List<Triple<String, Float, Float>>
+    ) {
+        this.horizon = horizon
+        this.altAzimuth = altAzimuth
+        this.directionLetters = directionLetters
+
     }
 }
