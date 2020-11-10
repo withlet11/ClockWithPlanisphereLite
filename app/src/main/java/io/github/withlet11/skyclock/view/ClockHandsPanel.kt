@@ -32,6 +32,10 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
     private var minute = 0
     private var second = 0
     var isVisible = true
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     private val paint = Paint().apply { isAntiAlias = true }
     private val hourHandsColor = context?.getColor(R.color.transparentBlue2) ?: 0
@@ -80,10 +84,11 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
         restore()
     }
 
+    /** Checks if a position is on the center of the canvas. */
     fun isCenter(position: Pair<Float, Float>): Boolean =
         position.toCanvasXY().isNear(centerPosition)
 
-    fun set(hour: Int, minute: Int, second: Int) {
+    fun setClock(hour: Int, minute: Int, second: Int) {
         this.hour = hour
         this.minute = minute
         this.second = second

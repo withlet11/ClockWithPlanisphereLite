@@ -54,6 +54,8 @@ class SolarAndSiderealTime {
     var offset = 0f
         private set
 
+    val dayOfYear get() = currentTime.dayOfYear
+
     var longitude: Double = 0.0
         set(value) {
             field = value
@@ -69,8 +71,7 @@ class SolarAndSiderealTime {
     private val utc: LocalDateTime
         get() = LocalDateTime.ofInstant(currentTime.toInstant(), ZoneOffset.UTC)
 
-    private val ut1: LocalDateTime
-        get() = utc + this.dut1
+    private val ut1: LocalDateTime get() = utc + this.dut1
 
     private val elapsedSeconds
         get() = Duration.ofHours(ut1.hour.toLong()) +
@@ -137,22 +138,16 @@ class SolarAndSiderealTime {
     }
 
     /**
-     * Changes solar time with fixed sidereal time.
+     * Changes date by using solar time with fixed sidereal time.
+     * @param rotate changes of solar time as degree
      * Date: change
-     * Local time: change
-     * Sidereal time: fixed
+     * Sidereal time: fix
      */
-    fun setSolarTimeWithFixedSiderealTime(rotate: Float) {
-        // The timezone offset is fixed with the current one because the date (month-day) ring is fixed with the current timezone offset.
+    fun changeDateWithFixedSiderealTime(rotate: Float) {
+        // The timezone offset is fixed with the current one because the date (month-day) ring is
+        // fixed with the current timezone offset.
         val currentZonedDateTime = ZonedDateTime.now()
         val currentTimezoneOffset = currentZonedDateTime.offset.totalSeconds
-        val currentTimezone = currentZonedDateTime.zone
-
-        // Calculate with UT1 because it is easier to calculate without timezone or daylight saving time.
-        val currentDateTime = ut1
-        val currentDayOfYear = currentDateTime.dayOfYear
-        val currentYear = currentDateTime.year
-        val currentElapsedSeconds = elapsedSeconds.seconds
 
         // Calculate the difference of solar angle between the current and the target
         val currentSolarAngle = solarAngle
@@ -160,8 +155,14 @@ class SolarAndSiderealTime {
         val differenceOfSolarAngle =
             normalizeDegree(targetSolarAngle - currentSolarAngle + 180.0) - 180.0 // -180 to 180 deg
 
+        // Calculate with UT1 because it is easier to calculate without timezone or daylight saving time.
+        val currentDateTime = ut1
+        val currentDayOfYear = currentDateTime.dayOfYear
+        val currentYear = currentDateTime.year
+        val currentElapsedSeconds = elapsedSeconds.seconds
+
         // Calculate the target day of year
-        // The precise orbital period = 365.256... days, but 1 rotate = 365 or 366 days on this planisphere.
+        // The precise orbital period is 365.256... days, but 1 rotate is 365 or 366 days on this planisphere.
         val lengthOfYear = Year.of(currentYear).length()
         var targetDayOfYear =
             (currentDayOfYear - truncate(differenceOfSolarAngle / 360.0 * lengthOfYear).toInt()).let { dayOfYear ->
@@ -194,19 +195,76 @@ class SolarAndSiderealTime {
             }
         }
 
-        // Make an instance of ZonedDateTime with the current timezone
-        val targetDate = LocalDate.ofYearDay(currentYear, targetDayOfYear)
-        val targetTime = LocalTime.ofSecondOfDay(targetElapsedSeconds)
-        val targetDateTime =
-            ZonedDateTime.of(targetDate, targetTime, ZoneOffset.UTC)
-                .withZoneSameInstant(currentTimezone)
+        val currentTimezone = currentZonedDateTime.zone
+        updateLocalTime(currentYear, targetDayOfYear, targetElapsedSeconds, currentTimezone)
+    }
 
-        // Set the values to the properties
-        hour = targetDateTime.hour
-        minute = targetDateTime.minute
-        second = targetDateTime.second
-        currentTime = targetDateTime
-        updateDateList(currentTime)
+    /**
+     * Changes date by using sidereal time with fixed solar time.
+     * @param rotate changes of sidereal time as degree
+     * Date: change
+     * Solar time: fix
+     */
+    fun changeDateWithFixedSolarTime(rotate: Float) {
+        // Calculate with UT1 because it is easier to calculate without timezone or daylight
+        // saving time.
+        val currentDateTime = ut1
+        val currentYear = currentDateTime.year
+        val currentElapsedSeconds = elapsedSeconds.seconds
+
+        // Calculates the target day of year. The precise orbital period is 365.256... days, but
+        // 1 rotate is 365 or 366 days on this planisphere.
+        val lengthOfYear = Year.of(currentYear).length()
+        val targetDayOfYear =
+            (normalizeDegree(-rotate.toDouble()) / 360.0 * lengthOfYear).toInt() + 1
+
+        val currentTimezone = ZonedDateTime.now().zone
+        updateLocalTime(currentYear, targetDayOfYear, currentElapsedSeconds, currentTimezone)
+    }
+
+    /**
+     * Changes sidereal time by using solar time with fixed date
+     * @param rotate changes of solar time as degree
+     * Date: fix
+     * Sidereal time: change
+     */
+    fun changeSiderealTimeWithFixedDate(rotate: Float) {
+        // Calculate with UT1 because it is easier to calculate without timezone or daylight
+        // saving time.
+        val currentDateTime = ut1
+        val currentYear = currentDateTime.year
+        val currentDayOfYear = currentDateTime.dayOfYear
+        val currentElapsedSeconds = elapsedSeconds.seconds
+
+        val differenceOfSeconds = rotate / 360.0 * 86400.0
+        val targetElapsedSeconds =
+            (currentElapsedSeconds - differenceOfSeconds).toLong().let { seconds ->
+                when {
+                    seconds < 0 -> seconds + 86400
+                    seconds >= 86400 -> seconds - 86400
+                    else -> seconds
+                }
+            }
+
+        val currentTimezone = ZonedDateTime.now().zone
+        updateLocalTime(currentYear, currentDayOfYear, targetElapsedSeconds, currentTimezone)
+    }
+
+    /** Sets any year, any day and elapsed seconds to properties with a timezone */
+    private fun updateLocalTime(year: Int, dayOfYear: Int, elapsedSeconds: Long, timezone: ZoneId) {
+        val date = LocalDate.ofYearDay(year, dayOfYear)
+        val time = LocalTime.ofSecondOfDay(elapsedSeconds)
+        val dateTime = ZonedDateTime.of(date, time, ZoneOffset.UTC).withZoneSameInstant(timezone)
+        updateLocalTime(dateTime)
+    }
+
+    /** Sets properties with a ZonedDateTime */
+    private fun updateLocalTime(zonedDateTime: ZonedDateTime) {
+        hour = zonedDateTime.hour
+        minute = zonedDateTime.minute
+        second = zonedDateTime.second
+        currentTime = zonedDateTime
+        updateDateList(zonedDateTime)
     }
 
     companion object {
@@ -257,6 +315,7 @@ class SolarAndSiderealTime {
         ): Double =
             (getJd(year, monthValue, dayOfMonth, elapsedSeconds) - 2451545.0) / 36525.0
 
+        /** Normalizes degrees into the range between 0 to 360 */
         fun normalizeDegree(angle: Double) = (angle % 360.0 + 360.0) % 360.0
     }
 }

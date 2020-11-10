@@ -26,10 +26,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
 import java.lang.Math.toDegrees
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 abstract class AbstractPanel(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     companion object {
@@ -41,14 +38,28 @@ abstract class AbstractPanel(context: Context?, attrs: AttributeSet?) : View(con
         const val SKY_BACKGROUND_RADIUS = 336f
 
         /**
-         * Convert a length on the canvas
+         * Converts a length on the canvas.
          * @receiver a length (the radius of the draw area = 1)
          * @return the length on the canvas
          */
         fun Float.toCanvas(): Float = this * CIRCLE_RADIUS
 
         /**
-         * Check if a position and [other] is near on the canvas
+         * Checks if a position is on the circle.
+         * @receiver a position on the canvas
+         * @param center the center of the canvas
+         * @param radius the radius of the circle
+         * @return true if 2 position is near
+         */
+        fun Pair<Float, Float>.isNear(center: Pair<Float, Float>, radius: Float): Boolean {
+            val r2 = (first - center.first).pow(2) + (second - center.second).pow(2)
+            val minR2 = (radius - 50).pow(2)
+            val maxR2 = (radius + 50).pow(2)
+            return r2 > minR2 && r2 < maxR2
+        }
+
+        /**
+         * Checks if a position and [other] is near on the canvas.
          * @receiver a position on the canvas
          * @return true if 2 position is near
          */
@@ -98,7 +109,7 @@ abstract class AbstractPanel(context: Context?, attrs: AttributeSet?) : View(con
     }
 
     /**
-     * Convert a position on the fragment to the absolute position on the canvas
+     * Converts a position on the fragment to the absolute position on the canvas.
      * @receiver a position on the fragment
      * @return the absolute position on the canvas
      */
@@ -106,7 +117,7 @@ abstract class AbstractPanel(context: Context?, attrs: AttributeSet?) : View(con
         first + scrollX to second + scrollY
 
     /**
-     * Convert a relative position to the absolute position on the canvas with a rotate angle
+     * Converts a relative position to the absolute position on the canvas with a rotate angle.
      * @receiver a relative position (the radius of the draw area = 1)
      * @param rotate a rotate angle (degrees)
      * @return the absolute position on the canvas
@@ -121,8 +132,29 @@ abstract class AbstractPanel(context: Context?, attrs: AttributeSet?) : View(con
     }
 
     /**
-     * Calculate the rotate angle of a position on the fragment with the absolute position of the
-     * center on the canvas
+     * Converts a relative position to the absolute position on the canvas.
+     * @receiver a relative position (the radius of the draw area = 1)
+     * @return the absolute position on the canvas
+     */
+    protected fun Pair<Float, Float>.toAbsoluteXY(): Pair<Float, Float> {
+        val absoluteX = first * scale + centerPosition.first
+        val absoluteY = second * scale + centerPosition.second
+        return absoluteX to absoluteY
+    }
+
+    /**
+     * Scales a circle.
+     * @receiver a radius of circle that center is at the center of the canvas.
+     * @return the absolute position of center and the absolute length of radius on the canvas
+     */
+    protected fun Float.toAbsoluteXY(): Pair<Pair<Float, Float>, Float> {
+        val radius = this * scale
+        return (centerPosition.first to centerPosition.second) to radius
+    }
+
+    /**
+     * Calculates the rotate angle of a position on the fragment with the absolute position of the
+     * center on the canvas.
      * @param x x of the absolute position on the fragment
      * @param y y of the absolute position on the fragment
      * @return the rotate angle (degrees)

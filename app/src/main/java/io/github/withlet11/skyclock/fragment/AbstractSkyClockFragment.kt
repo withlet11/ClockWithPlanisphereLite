@@ -37,6 +37,8 @@ import kotlin.math.min
 import kotlin.math.pow
 
 abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChangeObserver {
+    private enum class SwipeStatus { ANYTHING, SUN, SKY_EDGE, DATE }
+
     private var locationChangeSubject: MainActivity? = null
     private lateinit var periodicalUpdater: PeriodicalUpdater
 
@@ -74,9 +76,10 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     private var firstActionY = 0f
     private var previousActionX = 0f
     private var previousActionY = 0f
+    private var previousRotate = 0f
     private var clickCount = 0
     private var previousClickTime = 0L
-    private var isDraggingSun = false
+    private var swipeStatus: SwipeStatus = SwipeStatus.ANYTHING
 
     // visibility
     private var isClockHandsVisible
@@ -135,10 +138,7 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     override fun onResume() {
         super.onResume()
         changeLocation(skyViewModel.latitude, skyViewModel.longitude)
-        val visibility = isClockHandsVisible
-        isClockHandsVisible = true
-        updateClock()
-        isClockHandsVisible = visibility
+        updateClockWithoutCheck()
         periodicalUpdater.timerSet()
     }
 
@@ -152,23 +152,24 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         super.onDestroyView()
     }
 
+    /** OnClickListener calls this function */
     private fun toggleZoom() {
         isZoomed = !isZoomed
         clickCount = 0
         previousClickTime = 0L
     }
 
+    /** OnClickListener calls this function */
     private fun showOrHideClockHandsPanel() {
         clickCount = 0
         isClockHandsVisible = !isClockHandsVisible
         if (isClockHandsVisible) {
             updateClock()
             updateSkyPanel()
-        } else {
-            clockHandsPanel.invalidate()
         }
     }
 
+    /** OnClickListener calls this function */
     private fun recordFirstClick() {
         clickCount = 1
         previousClickTime = SystemClock.elapsedRealtime()
@@ -191,17 +192,40 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
                     previousActionY = e.y
                     firstActionX = e.x
                     firstActionY = e.y
-                    isDraggingSun =
-                        !isClockHandsVisible && sunPanel.isOnAnalemma(e.x to e.y)
+                    previousRotate = clockBasePanel.getAngle(e.x, e.y)
+                    if (!isClockHandsVisible) {
+                        swipeStatus = when {
+                            sunPanel.isOnAnalemma(e.x to e.y) ->
+                                SwipeStatus.SUN
+                            clockBasePanel.isOnTodayGrid(e.x to e.y) ->
+                                SwipeStatus.DATE
+                            clockBasePanel.isOnSkyBackgroundEdge(e.x to e.y) ->
+                                SwipeStatus.SKY_EDGE
+                            else -> SwipeStatus.ANYTHING
+
+                        }
+                    }
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    if (isDraggingSun) {
-                        val rotate = sunPanel.getAngle(e.x, e.y)
-                        changeTime(rotate)
-                    } else {
-                        scrollPanel(e.x, e.y)
-                        previousActionX = e.x
-                        previousActionY = e.y
+                    when (swipeStatus) {
+                        SwipeStatus.SUN -> {
+                            val rotate = sunPanel.getAngle(e.x, e.y)
+                            changeDateWithFixedSiderealTime(rotate)
+                        }
+                        SwipeStatus.DATE -> {
+                            val rotate = clockBasePanel.getAngleFromJan1(e.x, e.y)
+                            changeDateWithFixedSolarTime(rotate)
+                        }
+                        SwipeStatus.SKY_EDGE -> {
+                            val rotate = clockBasePanel.getAngle(e.x, e.y)
+                            changeSiderealTimeWithFixedDate(rotate - previousRotate)
+                            previousRotate = rotate
+                        }
+                        else -> {
+                            scrollPanel(e.x, e.y)
+                            previousActionX = e.x
+                            previousActionY = e.y
+                        }
                     }
                 }
                 MotionEvent.ACTION_UP -> {
@@ -209,16 +233,28 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
                         (firstActionX - e.x).pow(2) + (firstActionY - e.y).pow(2) < 5f
                     ) { // when click happens
                         v?.performClick()
-                    } else { // when drag or press is ended
+                    } else { // when swiping or pressing is ended
                         clickCount = 0
                         previousClickTime = 0L
-                        if (isDraggingSun) {
-                            val rotate = sunPanel.getAngle(e.x, e.y)
-                            changeTime(rotate)
-                            isDraggingSun = false
-                        } else {
-                            scrollPanel(e.x, e.y)
+                        when (swipeStatus) {
+                            SwipeStatus.SUN -> {
+                                val rotate = sunPanel.getAngle(e.x, e.y)
+                                changeDateWithFixedSiderealTime(rotate)
+                            }
+                            SwipeStatus.DATE -> {
+                                val rotate = clockBasePanel.getAngleFromJan1(e.x, e.y)
+                                changeDateWithFixedSolarTime(rotate)
+                            }
+                            SwipeStatus.SKY_EDGE -> {
+                                val rotate = clockBasePanel.getAngle(e.x, e.y)
+                                changeSiderealTimeWithFixedDate(rotate - previousRotate)
+                                previousRotate = 0f
+                            }
+                            else -> {
+                                scrollPanel(e.x, e.y)
+                            }
                         }
+                        swipeStatus = SwipeStatus.ANYTHING
                     }
                 }
             }
@@ -352,15 +388,17 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     }
 
     fun updateClock() {
-        if (isClockHandsVisible) {
-            with(skyViewModel) {
-                setCurrentTime()
-                clockHandsPanel.set(hour, minute, second)
-                skyPanel.siderealAngle = siderealAngle
-                sunPanel.hourAngle = solarAngle
-            }
-            clockHandsPanel.invalidate()
+        if (isClockHandsVisible) updateClockWithoutCheck()
+    }
+
+    private fun updateClockWithoutCheck() {
+        with(skyViewModel) {
+            setCurrentTime()
+            clockHandsPanel.setClock(hour, minute, second)
+            skyPanel.siderealAngle = siderealAngle
+            sunPanel.hourAngle = solarAngle
         }
+        clockHandsPanel.invalidate()
     }
 
     fun updateSkyPanel() {
@@ -378,24 +416,55 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         changeLocation(latitude, longitude)
     }
 
-    /**
-     * Sets location to [skyViewModel] and [horizonPanel].
-     */
+    /** Sets location to [skyViewModel] and [horizonPanel]. */
     private fun changeLocation(latitude: Double, longitude: Double) {
         skyViewModel.changeLocation(latitude, longitude)
         setHorizonPanel()
     }
 
     /**
-     * Changes local mean time by using the rotate angle of the Sun and update the sky view.
+     * Changes date by using the rotate angle of the Sun (solar time) with fixed sidereal time
+     * and update the sky view.
      * @param rotate the rotate angle of the Sun (degrees)
      */
-    private fun changeTime(rotate: Float) {
+    private fun changeDateWithFixedSiderealTime(rotate: Float) {
         with(skyViewModel) {
-            setDateWithFixedSiderealTime(rotate)
-            clockBasePanel.dateList = dateList
+            changeDateWithFixedSiderealTime(rotate)
+            clockBasePanel.dateList = dateList // the position of today is changed
             skyPanel.siderealAngle = siderealAngle
             sunPanel.setHourAngleAndCurrentPosition(solarAngle, currentSunPosition)
+        }
+        clockBasePanel.invalidate()
+        skyPanel.invalidate()
+        sunPanel.invalidate()
+    }
+
+    /**
+     * Changes date by using the sidereal time with fixed solar time
+     * and update the sky view.
+     * @param rotate the sidereal angle (degrees)
+     */
+    private fun changeDateWithFixedSolarTime(rotate: Float) {
+        with(skyViewModel) {
+            changeDateWithFixedSolarTime(rotate)
+            clockBasePanel.dateList = dateList // the position of today is changed
+            skyPanel.siderealAngle = siderealAngle
+            sunPanel.setHourAngleAndCurrentPosition(solarAngle, currentSunPosition)
+        }
+        clockBasePanel.invalidate()
+        skyPanel.invalidate()
+        sunPanel.invalidate()
+    }
+
+    /**
+     * Changes sidereal time by setting local time with fixed date and update the sky view.
+     * @param rotate the rotate angle of the Sun (degrees)
+     */
+    private fun changeSiderealTimeWithFixedDate(rotate: Float) {
+        with(skyViewModel) {
+            changeSiderealTimeWithFixedDate(rotate)
+            skyPanel.siderealAngle = siderealAngle
+            sunPanel.hourAngle = solarAngle
         }
         clockBasePanel.invalidate()
         skyPanel.invalidate()

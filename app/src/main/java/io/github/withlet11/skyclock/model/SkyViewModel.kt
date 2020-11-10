@@ -32,7 +32,7 @@ class SkyViewModel(
 ) {
     private val horizonModel = HorizonModel(skyModel)
     private val sunModel = SunModel(skyModel)
-    private val localTime = SolarAndSiderealTime()
+    private val solarAndSiderealTime = SolarAndSiderealTime()
 
     var latitude = 0.0
         private set(value) {
@@ -44,30 +44,33 @@ class SkyViewModel(
 
     var longitude = 0.0
         private set(value) {
-            localTime.longitude = value
+            solarAndSiderealTime.longitude = value
             field = value
         }
 
     val hour: Int
-        get() = localTime.hour
+        get() = solarAndSiderealTime.hour
 
     val minute: Int
-        get() = localTime.minute
+        get() = solarAndSiderealTime.minute
 
     val second: Int
-        get() = localTime.second
+        get() = solarAndSiderealTime.second
+
+    val dayOfYear: Int
+        get() = solarAndSiderealTime.dayOfYear
 
     val siderealAngle: Float
-        get() = localTime.siderealAngle
+        get() = solarAndSiderealTime.siderealAngle
 
     val solarAngle: Float
-        get() = localTime.solarAngle
+        get() = solarAndSiderealTime.solarAngle
 
     val dateList: List<DateObject>
-        get() = localTime.dateList
+        get() = solarAndSiderealTime.dateList
 
     val offset: Float
-        get() = localTime.offset
+        get() = solarAndSiderealTime.offset
 
     val horizon: List<Pair<Float, Float>>
         get() = horizonModel.horizon
@@ -97,7 +100,7 @@ class SkyViewModel(
         get() = sunModel.monthlyPositionList
 
     val currentSunPosition: Pair<Float, Float>
-        get() = sunModel.getSunPosition(localTime.jc)
+        get() = sunModel.getSunPosition(solarAndSiderealTime.jc)
 
     val tenMinuteGridStep: Float
         get() = skyModel.tenMinuteGridStep
@@ -117,7 +120,7 @@ class SkyViewModel(
     }
 
     fun setCurrentTime() {
-        localTime.setCurrentTime()
+        solarAndSiderealTime.setCurrentTime()
     }
 
     fun changeLocation(latitude: Double, longitude: Double) {
@@ -125,7 +128,15 @@ class SkyViewModel(
         this.longitude = longitude
     }
 
-    fun setDateWithFixedSiderealTime(rotate: Float) {
-        localTime.setSolarTimeWithFixedSiderealTime(rotate * sign(tenMinuteGridStep))
+    fun changeDateWithFixedSiderealTime(rotate: Float) {
+        solarAndSiderealTime.changeDateWithFixedSiderealTime(rotate * sign(tenMinuteGridStep))
+    }
+
+    fun changeDateWithFixedSolarTime(rotate: Float) {
+        solarAndSiderealTime.changeDateWithFixedSolarTime(rotate * sign(tenMinuteGridStep))
+    }
+
+    fun changeSiderealTimeWithFixedDate(rotate: Float) {
+        solarAndSiderealTime.changeSiderealTimeWithFixedDate(rotate * sign(tenMinuteGridStep))
     }
 }

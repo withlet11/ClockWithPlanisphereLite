@@ -27,12 +27,14 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import io.github.withlet11.skyclock.R
 import io.github.withlet11.skyclock.model.DateObject
-import kotlin.math.PI
+import kotlin.math.*
 
 class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
     private var offset = 0f
     private var direction = false
     var dateList = listOf<DateObject>()
+    var dayOfYear = 1
+        private set
 
     private val paint = Paint().apply { isAntiAlias = true }
     private val bezelColor = context?.getColor(R.color.darkBlue) ?: 0
@@ -117,13 +119,16 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
 
     private fun Canvas.drawDate() {
         val circleY = 341f
-        dateList.forEach { date ->
+        dateList.forEachIndexed { i, date ->
             save()
             // angle + 180 because text is drawn at opposite side
             rotate((-360f / dateList.size * date.dayOfYear + offset + 180f) * if (direction) -1f else 1f)
 
             val (color, r) = when {
-                date.isToday -> todayGridColor to 4f
+                date.isToday -> {
+                    dayOfYear = i + 1
+                    todayGridColor to 4f
+                }
                 date.dayOfMonth % 10 == 0 -> dayGridColor to 3f
                 date.dayOfMonth % 5 == 0 -> dayGridColor to 2f
                 else -> dayGridColor to 1f
@@ -181,4 +186,33 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
         this.direction = direction
         this.dateList = dateList
     }
+
+    /**
+     * Checks if a position is on the edge of sky background
+     * @return true if a position is on the edge
+     */
+    fun isOnSkyBackgroundEdge(posOnFragment: Pair<Float, Float>): Boolean {
+        val (center, radius) = SKY_BACKGROUND_RADIUS.toAbsoluteXY()
+        return posOnFragment.toCanvasXY().isNear(center, radius)
+    }
+
+    /**
+     * Checks if a position is on today grid.
+     * @param posOnFragment a position on the fragment
+     * @param dayOfYear today's day of year
+     * @return true if a position is on today grid
+     */
+    fun isOnTodayGrid(posOnFragment: Pair<Float, Float>): Boolean {
+        val rotate =
+            ((-360.0 / dateList.size * dayOfYear + offset) * if (direction) -1.0 else 1.0) / 180.0 * PI
+        val position =
+            SKY_BACKGROUND_RADIUS * sin(rotate).toFloat() to -SKY_BACKGROUND_RADIUS * cos(rotate).toFloat()
+        return posOnFragment.toCanvasXY().isNear(position.toAbsoluteXY())
+    }
+
+    /**
+     * Gets the rotate angle of a position from January 1
+     */
+    fun getAngleFromJan1(x: Float, y: Float): Float =
+        getAngle(x, y) + if (direction) offset else -offset
 }

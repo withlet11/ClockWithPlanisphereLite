@@ -9,8 +9,9 @@ API 26 (Android 8.0) or later
 ## Features
 * **Standard Time:** You can read the standard time of your time zone.
 * **Local Sidereal Time:** You can read the local sidereal time.
-* **Planisphere mode:** You can use as a planisphere. In the current version, you can change solar time
-  with fixed sidereal time.
+* **Planisphere mode:** You can use as a planisphere. You can change date and solar time by moving
+  the Sun (sidereal time is fixed), change date and sidereal time by moving the red spot (solar
+  time is fixed), or change solar and sidereal time by rotating the ring of date (date is fixed).
 * **GPS Available:** You can use the GPS for setting your location.
 * **Magnitude 6 star:** The all stars that are brighter than a magnitude 6 star are displayed.
 * **Constellation lines:** Constellation lines are displayed.
@@ -29,5 +30,14 @@ API 26 (Android 8.0) or later
 ### To adjust the position of clock
 * Swipe the screen.
 
-### To show/hide the clock hands
-* tap the center of clock
+### To show/hide the clock hands (Clock mode / Planisphere mode)
+* Tap the center of clock.
+
+### To move the Sun only (Stars don't move)
+* Swipe the Sun or analemma.
+
+### To move stars only (The Sun doesn't move)
+* Swipe the red spot
+
+### To move the Sun and stars together
+* Swipe the ring of date
