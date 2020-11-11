@@ -33,8 +33,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
     private var offset = 0f
     private var direction = false
     var dateList = listOf<DateObject>()
-    var dayOfYear = 1
-        private set
+    private var dayOfYear = 1
 
     private val paint = Paint().apply { isAntiAlias = true }
     private val bezelColor = context?.getColor(R.color.darkBlue) ?: 0
@@ -199,7 +198,6 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
     /**
      * Checks if a position is on today grid.
      * @param posOnFragment a position on the fragment
-     * @param dayOfYear today's day of year
      * @return true if a position is on today grid
      */
     fun isOnTodayGrid(posOnFragment: Pair<Float, Float>): Boolean {

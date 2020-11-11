@@ -57,9 +57,6 @@ class SkyViewModel(
     val second: Int
         get() = solarAndSiderealTime.second
 
-    val dayOfYear: Int
-        get() = solarAndSiderealTime.dayOfYear
-
     val siderealAngle: Float
         get() = solarAndSiderealTime.siderealAngle
 

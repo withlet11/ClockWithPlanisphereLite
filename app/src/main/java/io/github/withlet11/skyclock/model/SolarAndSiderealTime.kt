@@ -54,8 +54,6 @@ class SolarAndSiderealTime {
     var offset = 0f
         private set
 
-    val dayOfYear get() = currentTime.dayOfYear
-
     var longitude: Double = 0.0
         set(value) {
             field = value
@@ -144,14 +142,9 @@ class SolarAndSiderealTime {
      * Sidereal time: fix
      */
     fun changeDateWithFixedSiderealTime(rotate: Float) {
-        // The timezone offset is fixed with the current one because the date (month-day) ring is
-        // fixed with the current timezone offset.
-        val currentZonedDateTime = ZonedDateTime.now()
-        val currentTimezoneOffset = currentZonedDateTime.offset.totalSeconds
-
         // Calculate the difference of solar angle between the current and the target
         val currentSolarAngle = solarAngle
-        val targetSolarAngle = -rotate + currentTimezoneOffset / 86400.0 * 360.0 - longitude
+        val targetSolarAngle = -rotate
         val differenceOfSolarAngle =
             normalizeDegree(targetSolarAngle - currentSolarAngle + 180.0) - 180.0 // -180 to 180 deg
 
@@ -195,8 +188,7 @@ class SolarAndSiderealTime {
             }
         }
 
-        val currentTimezone = currentZonedDateTime.zone
-        updateLocalTime(currentYear, targetDayOfYear, targetElapsedSeconds, currentTimezone)
+        updateLocalTime(currentYear, targetDayOfYear, targetElapsedSeconds)
     }
 
     /**
@@ -218,8 +210,7 @@ class SolarAndSiderealTime {
         val targetDayOfYear =
             (normalizeDegree(-rotate.toDouble()) / 360.0 * lengthOfYear).toInt() + 1
 
-        val currentTimezone = ZonedDateTime.now().zone
-        updateLocalTime(currentYear, targetDayOfYear, currentElapsedSeconds, currentTimezone)
+        updateLocalTime(currentYear, targetDayOfYear, currentElapsedSeconds)
     }
 
     /**
@@ -246,25 +237,24 @@ class SolarAndSiderealTime {
                 }
             }
 
-        val currentTimezone = ZonedDateTime.now().zone
-        updateLocalTime(currentYear, currentDayOfYear, targetElapsedSeconds, currentTimezone)
+        updateLocalTime(currentYear, currentDayOfYear, targetElapsedSeconds)
     }
 
-    /** Sets any year, any day and elapsed seconds to properties with a timezone */
-    private fun updateLocalTime(year: Int, dayOfYear: Int, elapsedSeconds: Long, timezone: ZoneId) {
+    /**
+     *  Sets any year, any day and elapsed seconds to properties. The timezone offset is fixed
+     *  with the current one because the date (month-day) ring is fixed with the current timezone
+     *  offset.
+     */
+    private fun updateLocalTime(year: Int, dayOfYear: Int, elapsedSeconds: Long) {
+        val timezone = ZonedDateTime.now().zone
         val date = LocalDate.ofYearDay(year, dayOfYear)
         val time = LocalTime.ofSecondOfDay(elapsedSeconds)
         val dateTime = ZonedDateTime.of(date, time, ZoneOffset.UTC).withZoneSameInstant(timezone)
-        updateLocalTime(dateTime)
-    }
-
-    /** Sets properties with a ZonedDateTime */
-    private fun updateLocalTime(zonedDateTime: ZonedDateTime) {
-        hour = zonedDateTime.hour
-        minute = zonedDateTime.minute
-        second = zonedDateTime.second
-        currentTime = zonedDateTime
-        updateDateList(zonedDateTime)
+        hour = dateTime.hour
+        minute = dateTime.minute
+        second = dateTime.second
+        currentTime = dateTime
+        updateDateList(dateTime)
     }
 
     companion object {
