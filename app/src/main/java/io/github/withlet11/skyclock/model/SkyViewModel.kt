@@ -22,6 +22,9 @@
 package io.github.withlet11.skyclock.model
 
 import android.content.Context
+import io.github.withlet11.skyclock.model.AbstractSkyModel.ConstellationLineGeometry
+import io.github.withlet11.skyclock.model.AbstractSkyModel.StarGeometry
+import io.github.withlet11.skyclock.model.SolarAndSiderealTime.*
 import kotlin.math.sign
 
 class SkyViewModel(

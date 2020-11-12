@@ -27,10 +27,10 @@ import java.io.*
 import java.util.ArrayList
 import kotlin.math.*
 
-data class StarGeometry(val x: Float, val y: Float, val r: Float)
-data class ConstellationLineGeometry(val x1: Float, val y1: Float, val x2: Float, val y2: Float)
-
 abstract class AbstractSkyModel {
+    data class StarGeometry(val x: Float, val y: Float, val r: Float)
+    data class ConstellationLineGeometry(val x1: Float, val y1: Float, val x2: Float, val y2: Float)
+
     companion object {
         const val ANGLE_LIMIT = 155.0
     }

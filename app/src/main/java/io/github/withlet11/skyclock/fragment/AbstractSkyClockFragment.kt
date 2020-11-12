@@ -132,13 +132,15 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
 
     override fun onStart() {
         super.onStart()
-        prepareClock()
+        setStarDataList()
+        setHorizonPanel()
+        setClockBasePanel()
     }
 
     override fun onResume() {
         super.onResume()
         changeLocation(skyViewModel.latitude, skyViewModel.longitude)
-        updateClockWithoutCheck()
+        updateClockWithoutCheck() // updates time here
         periodicalUpdater.timerSet()
     }
 
@@ -150,29 +152,6 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     override fun onDestroyView() {
         locationChangeSubject?.removeObserver(this)
         super.onDestroyView()
-    }
-
-    /** OnClickListener calls this function */
-    private fun toggleZoom() {
-        isZoomed = !isZoomed
-        clickCount = 0
-        previousClickTime = 0L
-    }
-
-    /** OnClickListener calls this function */
-    private fun showOrHideClockHandsPanel() {
-        clickCount = 0
-        isClockHandsVisible = !isClockHandsVisible
-        if (isClockHandsVisible) {
-            updateClock()
-            updateSkyPanel()
-        }
-    }
-
-    /** OnClickListener calls this function */
-    private fun recordFirstClick() {
-        clickCount = 1
-        previousClickTime = SystemClock.elapsedRealtime()
     }
 
     /** Sets OnClickListener and OnTouchListener to [clockHandsPanel]. */
@@ -263,6 +242,29 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         }
     }
 
+    /** OnClickListener calls this function */
+    private fun toggleZoom() {
+        isZoomed = !isZoomed
+        clickCount = 0
+        previousClickTime = 0L
+    }
+
+    /** OnClickListener calls this function */
+    private fun showOrHideClockHandsPanel() {
+        clickCount = 0
+        isClockHandsVisible = !isClockHandsVisible
+        if (isClockHandsVisible) {
+            updateClockWithoutCheck() // updates time here
+            updateClockBasePanel()
+        }
+    }
+
+    /** OnClickListener calls this function */
+    private fun recordFirstClick() {
+        clickCount = 1
+        previousClickTime = SystemClock.elapsedRealtime()
+    }
+
     /**
      * Sets an observer to get the view geometries after the view is created or the view
      * geometries is changed.
@@ -275,16 +277,12 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         }
     }
 
-    /**
-     * Sets [PeriodicalUpdater] as a periodical updater.
-     */
+    /** Sets [PeriodicalUpdater] as a periodical updater. */
     private fun setPeriodicalUpdater() {
         periodicalUpdater = PeriodicalUpdater(this)
     }
 
-    /**
-     * Gets geometries of [clockHandsPanel] and adjust positions of [clockFrame] and panels.
-     */
+    /** Gets geometries of [clockHandsPanel] and adjust positions of [clockFrame] and panels. */
     private fun adjustFrameLayoutPosition() {
         with(clockHandsPanel) {
             val totalDifference = wideSideLength - narrowSideLength
@@ -325,9 +323,7 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         }
     }
 
-    /**
-     * Calculates the scroll position from a touch position, and change the positions of panels.
-     */
+    /** Calculates the scroll position from a touch position, and change the positions of panels. */
     private fun scrollPanel(endX: Float, endY: Float) {
         val x = max(
             min(clockBasePanel.scrollX + (previousActionX - endX).toInt(), scrollableHorizonMax),
@@ -351,13 +347,6 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
             it.scrollX = x
             it.scrollY = y
         }
-    }
-
-    private fun prepareClock() {
-        setStarDataList()
-        setHorizonPanel()
-        setClockBasePanel()
-        updateClock()
     }
 
     private fun setStarDataList() {
@@ -387,8 +376,20 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
         with(skyViewModel) { clockBasePanel.set(offset, direction, dateList) }
     }
 
+    private fun updateClockBasePanel() {
+        setClockBasePanel()
+        clockBasePanel.invalidate()
+    }
+
+    /** This is called by PeriodicalUpdater only. This shouldn't be called internal */
     fun updateClock() {
         if (isClockHandsVisible) updateClockWithoutCheck()
+    }
+
+    /** This is called by PeriodicalUpdater only. This shouldn't be called internal */
+    fun updateSkyPanel() {
+        skyPanel.invalidate()
+        sunPanel.invalidate()
     }
 
     private fun updateClockWithoutCheck() {
@@ -399,13 +400,8 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
             sunPanel.hourAngle = solarAngle
         }
         clockHandsPanel.invalidate()
-    }
-
-    fun updateSkyPanel() {
-        if (isClockHandsVisible) {
-            skyPanel.invalidate()
-            sunPanel.invalidate()
-        }
+        skyPanel.invalidate()
+        sunPanel.invalidate()
     }
 
     /**

@@ -21,18 +21,9 @@
 
 package io.github.withlet11.skyclock.model
 
-import java.beans.PropertyChangeSupport
 import java.time.*
 import kotlin.math.floor
 import kotlin.math.truncate
-
-data class DateObject(
-    val dayOfYear: Int,
-    val dayOfMonth: Int,
-    val monthString: String,
-    val isToday: Boolean,
-    val isThisMonth: Boolean
-)
 
 /**
  * This class provides local mean solar time and local mean sidereal time.
@@ -94,25 +85,18 @@ class SolarAndSiderealTime {
     val jc: Double
         get() = getJc(ut1.year, ut1.monthValue, ut1.dayOfMonth, elapsedSeconds.seconds)
 
-    private val pcs = PropertyChangeSupport(this)
-
     init {
         setCurrentTime()
     }
 
     /** Set current time to the properties */
     fun setCurrentTime() {
-        val previous = currentDayOfYear
         currentTime = ZonedDateTime.now().also { now ->
             hour = now.hour
             minute = now.minute
             second = now.second
             updateDateList(now)
         }
-
-        if (previous != currentDayOfYear) pcs.firePropertyChange("dateChange", null, this)
-
-        pcs.firePropertyChange("localTime", null, this)
     }
 
     /** Update [dateList] */
@@ -308,4 +292,12 @@ class SolarAndSiderealTime {
         /** Normalizes degrees into the range between 0 to 360 */
         fun normalizeDegree(angle: Double) = (angle % 360.0 + 360.0) % 360.0
     }
+
+    data class DateObject(
+        val dayOfYear: Int,
+        val dayOfMonth: Int,
+        val monthString: String,
+        val isToday: Boolean,
+        val isThisMonth: Boolean
+    )
 }

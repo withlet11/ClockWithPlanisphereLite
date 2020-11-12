@@ -25,8 +25,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import io.github.withlet11.skyclock.R
-import io.github.withlet11.skyclock.model.ConstellationLineGeometry
-import io.github.withlet11.skyclock.model.StarGeometry
+import io.github.withlet11.skyclock.model.AbstractSkyModel.ConstellationLineGeometry
+import io.github.withlet11.skyclock.model.AbstractSkyModel.StarGeometry
 import kotlin.math.*
 
 

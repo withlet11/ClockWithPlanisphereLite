@@ -26,7 +26,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import io.github.withlet11.skyclock.R
-import io.github.withlet11.skyclock.model.DateObject
+import io.github.withlet11.skyclock.model.SolarAndSiderealTime.DateObject
 import kotlin.math.*
 
 class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
