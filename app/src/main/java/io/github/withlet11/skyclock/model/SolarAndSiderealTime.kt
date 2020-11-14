@@ -27,46 +27,36 @@ import kotlin.math.truncate
 
 /**
  * This class provides local mean solar time and local mean sidereal time.
- * @property hour hour of local mean solar time
- * @property minute minute of local mean solar time
- * @property second second of local mean solar time
- * @property dateList set of month, day of month, flag of today on each day in this year
+ * @property localDateTime local date and time
  * @property offset angle difference of local mean solar time and UTC
  * @property longitude longitude of the observation site
  * @property siderealAngle local mean sidereal time as angle (degrees), 0 degree is 0 hour angle.
  * @property solarAngle local mean solar time as angle (degrees), 0 degree is 0 hour angle.
  */
 class SolarAndSiderealTime {
-    private var currentDayOfYear = 0
-    var hour = 0
-    var minute = 0
-    var second = 0
-    var dateList = listOf<DateObject>()
+    var localDateTime: LocalDateTime = LocalDateTime.now()
+
     var offset = 0f
         private set
 
     var longitude: Double = 0.0
         set(value) {
             field = value
-            offset = ((currentTime.offset.totalSeconds / 3600.0 / 24.0 -
+            offset = ((zonedDateTime.offset.totalSeconds / 3600.0 / 24.0 -
                     getGmst(ut1.year, 1, 1, 0)) * 360.0 - value).toFloat()
 
         }
 
-    private var currentTime = ZonedDateTime.now()
+    private var zonedDateTime = ZonedDateTime.now()
 
     private val dut1: Duration = Duration.ofNanos(-243 * 1000000)  // 2020-06-25
 
     private val utc: LocalDateTime
-        get() = LocalDateTime.ofInstant(currentTime.toInstant(), ZoneOffset.UTC)
+        get() = LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC)
 
     private val ut1: LocalDateTime get() = utc + this.dut1
 
-    private val elapsedSeconds
-        get() = Duration.ofHours(ut1.hour.toLong()) +
-                Duration.ofMinutes(ut1.minute.toLong()) +
-                Duration.ofSeconds(ut1.second.toLong()) +
-                Duration.ofNanos(ut1.nano.toLong())
+    private val elapsedSeconds get() = Duration.ofNanos(ut1.toLocalTime().toNanoOfDay())
 
     /** Local mean sidereal time as angle (degrees), 0 degree is 0 hour angle. */
     val siderealAngle: Float
@@ -79,44 +69,17 @@ class SolarAndSiderealTime {
 
     /** Local mean time as angle (degrees), 0 degree is 0 hour angle. */
     val solarAngle: Float
-        get() = ((ut1.hour + 12 + (ut1.minute + ut1.second / 60.0) / 60.0) / 24.0 * 360.0 + longitude).toFloat()
+        get() = ((ut1.toLocalTime().toSecondOfDay() / 3600.0 + 12.0) / 24.0 * 360.0
+                + longitude).toFloat()
 
     /** Current Julian centuries */
     val jc: Double
         get() = getJc(ut1.year, ut1.monthValue, ut1.dayOfMonth, elapsedSeconds.seconds)
 
-    init {
-        setCurrentTime()
-    }
-
     /** Set current time to the properties */
     fun setCurrentTime() {
-        currentTime = ZonedDateTime.now().also { now ->
-            hour = now.hour
-            minute = now.minute
-            second = now.second
-            updateDateList(now)
-        }
-    }
-
-    /** Update [dateList] */
-    private fun updateDateList(currentTime: ZonedDateTime) {
-        val current = currentTime.dayOfYear
-        if (currentDayOfYear != current) {
-            currentDayOfYear = current
-            val monthList = List(12) { Month.of(it + 1).toString() }
-            dateList = List(currentTime.toLocalDate().lengthOfYear()) {
-                val dayOfYear = it + 1
-                val date = LocalDate.ofYearDay(currentTime.year, dayOfYear)
-                DateObject(
-                    dayOfYear,
-                    date.dayOfMonth,
-                    monthList[date.monthValue - 1],
-                    dayOfYear == currentTime.dayOfYear,
-                    date.monthValue == currentTime.monthValue
-                )
-            }
-        }
+        zonedDateTime = ZonedDateTime.now()
+        localDateTime = zonedDateTime.toLocalDateTime()
     }
 
     /**
@@ -231,14 +194,11 @@ class SolarAndSiderealTime {
      */
     private fun updateLocalTime(year: Int, dayOfYear: Int, elapsedSeconds: Long) {
         val timezone = ZonedDateTime.now().zone
-        val date = LocalDate.ofYearDay(year, dayOfYear)
-        val time = LocalTime.ofSecondOfDay(elapsedSeconds)
-        val dateTime = ZonedDateTime.of(date, time, ZoneOffset.UTC).withZoneSameInstant(timezone)
-        hour = dateTime.hour
-        minute = dateTime.minute
-        second = dateTime.second
-        currentTime = dateTime
-        updateDateList(dateTime)
+        val localDate = LocalDate.ofYearDay(year, dayOfYear)
+        val utcTime = LocalTime.ofSecondOfDay(elapsedSeconds)
+        zonedDateTime =
+            ZonedDateTime.of(localDate, utcTime, ZoneOffset.UTC).withZoneSameInstant(timezone)
+        localDateTime = LocalDateTime.of(localDate, zonedDateTime.toLocalTime())
     }
 
     companion object {
@@ -292,12 +252,4 @@ class SolarAndSiderealTime {
         /** Normalizes degrees into the range between 0 to 360 */
         fun normalizeDegree(angle: Double) = (angle % 360.0 + 360.0) % 360.0
     }
-
-    data class DateObject(
-        val dayOfYear: Int,
-        val dayOfMonth: Int,
-        val monthString: String,
-        val isToday: Boolean,
-        val isThisMonth: Boolean
-    )
 }

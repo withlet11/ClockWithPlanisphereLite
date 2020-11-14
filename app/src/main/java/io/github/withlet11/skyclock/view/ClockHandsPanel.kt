@@ -26,11 +26,17 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import io.github.withlet11.skyclock.R
+import java.time.LocalTime
 
 class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
-    private var hour = 0
-    private var minute = 0
-    private var second = 0
+    var localTime: LocalTime = LocalTime.MIDNIGHT
+        set(value) {
+            if (field.toSecondOfDay() != value.toSecondOfDay()) {
+                field = value
+                invalidate()
+            }
+        }
+
     var isVisible = true
         set(value) {
             field = value
@@ -59,7 +65,7 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
 
     private fun Canvas.drawHourHand() {
         save()
-        rotate(180f / 6f * (hour + (minute + second / 60f) / 60f + 6f))
+        rotate(180f / 6f * (localTime.toSecondOfDay() / 3600f + 6f))
         paint.color = hourHandsColor
         paint.style = Paint.Style.FILL
         drawRect(-5f, -40f, 5f, 240f, paint)
@@ -68,7 +74,7 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
 
     private fun Canvas.drawMinuteHand() {
         save()
-        rotate(180f / 30f * (minute + second / 60f + 30f))
+        rotate(180f / 30f * (localTime.minute + localTime.second / 60f + 30f))
         paint.color = minuteHandsColor
         paint.style = Paint.Style.FILL
         drawRect(-4f, -40f, 4f, 384f, paint)
@@ -77,7 +83,7 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
 
     private fun Canvas.drawSecondHand() {
         save()
-        rotate(180f / 30f * (second + 30f))
+        rotate(180f / 30f * (localTime.second + 30f))
         paint.color = secondHandsColor
         paint.style = Paint.Style.FILL
         drawRect(-1.5f, -40f, 1.5f, 384f, paint)
@@ -87,10 +93,4 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
     /** Checks if a position is on the center of the canvas. */
     fun isCenter(position: Pair<Float, Float>): Boolean =
         position.toCanvasXY().isNear(centerPosition)
-
-    fun setClock(hour: Int, minute: Int, second: Int) {
-        this.hour = hour
-        this.minute = minute
-        this.second = second
-    }
 }

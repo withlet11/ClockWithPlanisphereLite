@@ -35,7 +35,13 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
     private var constellationLineList = listOf<ConstellationLineGeometry>()
     private var equatorial = listOf<Pair<Int, Float>>()
     private var ecliptic = listOf<Pair<Float, Float>>()
+
     var siderealAngle = 0f
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     private var tenMinuteGridStep = 180f / 72f
 
     private val paint = Paint().apply { isAntiAlias = true }
@@ -155,4 +161,8 @@ class SkyPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context,
         this.ecliptic = ecliptic
         this.tenMinuteGridStep = tenMinuteGridStep
     }
+
+    /** @return the difference of an angle with the current sidereal angle */
+    fun getAngleDifference(angle: Float): Float =
+        (abs(angle - siderealAngle) % 360f).let { min(it, 360f - it) }
 }

@@ -91,7 +91,6 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
         paint.color = directionLetterColor
         paint.style = Paint.Style.FILL
         paint.textSize = 18f
-        val fontMetrics = paint.fontMetrics
         directionLetters.forEach { (letter, x, y) ->
             val textWidth = paint.measureText(letter)
             drawText(
@@ -125,6 +124,5 @@ class HorizonPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(cont
         this.horizon = horizon
         this.altAzimuth = altAzimuth
         this.directionLetters = directionLetters
-
     }
 }

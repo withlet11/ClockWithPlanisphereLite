@@ -24,7 +24,9 @@ package io.github.withlet11.skyclock.model
 import android.content.Context
 import io.github.withlet11.skyclock.model.AbstractSkyModel.ConstellationLineGeometry
 import io.github.withlet11.skyclock.model.AbstractSkyModel.StarGeometry
-import io.github.withlet11.skyclock.model.SolarAndSiderealTime.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlin.math.sign
 
 class SkyViewModel(
@@ -51,23 +53,20 @@ class SkyViewModel(
             field = value
         }
 
-    val hour: Int
-        get() = solarAndSiderealTime.hour
+    val localDateTime: LocalDateTime
+        get() = solarAndSiderealTime.localDateTime
 
-    val minute: Int
-        get() = solarAndSiderealTime.minute
+    val localDate: LocalDate
+        get() = solarAndSiderealTime.localDateTime.toLocalDate()
 
-    val second: Int
-        get() = solarAndSiderealTime.second
+    val localTime: LocalTime
+        get() = solarAndSiderealTime.localDateTime.toLocalTime()
 
     val siderealAngle: Float
         get() = solarAndSiderealTime.siderealAngle
 
     val solarAngle: Float
         get() = solarAndSiderealTime.solarAngle
-
-    val dateList: List<DateObject>
-        get() = solarAndSiderealTime.dateList
 
     val offset: Float
         get() = solarAndSiderealTime.offset

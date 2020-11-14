@@ -68,6 +68,11 @@ abstract class AbstractPanel(context: Context?, attrs: AttributeSet?) : View(con
     }
 
     var isZoomed = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     var isLandScape = false
     var narrowSideLength = 0
     var wideSideLength = 0

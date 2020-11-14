@@ -37,6 +37,11 @@ import kotlin.math.min
 import kotlin.math.pow
 
 abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChangeObserver {
+    companion object {
+        const val MINIMUM_DEGREE = 0.25f
+        const val MINIMUM_SQUARE_DISTANCE = 0.005f * 0.005f
+    }
+
     private enum class SwipeStatus { ANYTHING, SUN, SKY_EDGE, DATE }
 
     private var locationChangeSubject: MainActivity? = null
@@ -140,7 +145,7 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     override fun onResume() {
         super.onResume()
         changeLocation(skyViewModel.latitude, skyViewModel.longitude)
-        updateClockWithoutCheck() // updates time here
+        updateClock() // updates time here
         periodicalUpdater.timerSet()
     }
 
@@ -253,10 +258,7 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     private fun showOrHideClockHandsPanel() {
         clickCount = 0
         isClockHandsVisible = !isClockHandsVisible
-        if (isClockHandsVisible) {
-            updateClockWithoutCheck() // updates time here
-            updateClockBasePanel()
-        }
+        if (isClockHandsVisible) updateClock() // updates time here
     }
 
     /** OnClickListener calls this function */
@@ -373,35 +375,57 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
     }
 
     private fun setClockBasePanel() {
-        with(skyViewModel) { clockBasePanel.set(offset, direction, dateList) }
+        with(skyViewModel) { clockBasePanel.set(offset, direction) }
+    }
+
+    /** This is called by PeriodicalUpdater only. This shouldn't be called internal */
+    fun updateClockIfClockHandsAreVisible() {
+        if (isClockHandsVisible) updateClock() // updates time here
+    }
+
+    private fun updateClock() {
+        skyViewModel.setCurrentTime()
+        updateClockBasePanel()
+        updateClockHandsPanel()
+        updateSkyPanel()
+        updateSunPanel()
+    }
+
+    private fun updateClockHandsPanel() {
+        clockHandsPanel.localTime = skyViewModel.localTime
     }
 
     private fun updateClockBasePanel() {
-        setClockBasePanel()
-        clockBasePanel.invalidate()
+        clockBasePanel.currentDate = skyViewModel.localDate
     }
 
-    /** This is called by PeriodicalUpdater only. This shouldn't be called internal */
-    fun updateClock() {
-        if (isClockHandsVisible) updateClockWithoutCheck()
+    private fun updateSkyPanel() {
+        val current = skyViewModel.siderealAngle
+        val difference = skyPanel.getAngleDifference(current)
+        if (difference > MINIMUM_DEGREE) skyPanel.siderealAngle = current
     }
 
-    /** This is called by PeriodicalUpdater only. This shouldn't be called internal */
-    fun updateSkyPanel() {
-        skyPanel.invalidate()
-        sunPanel.invalidate()
-    }
+    private fun updateSunPanel() {
+        if (sunPanel.isDifferentDate(skyViewModel.localDate)) {
+            val currentAngle = skyViewModel.solarAngle
+            val currentPosition = skyViewModel.currentSunPosition
+            val angle = sunPanel.getAngleDifference(currentAngle)
+            val distance = sunPanel.getDistance(currentPosition)
 
-    private fun updateClockWithoutCheck() {
-        with(skyViewModel) {
-            setCurrentTime()
-            clockHandsPanel.setClock(hour, minute, second)
-            skyPanel.siderealAngle = siderealAngle
-            sunPanel.hourAngle = solarAngle
+            if (angle > MINIMUM_DEGREE || distance > MINIMUM_SQUARE_DISTANCE) {
+                sunPanel.setSolarAngleAndCurrentPosition(
+                    currentAngle,
+                    currentPosition,
+                    skyViewModel.localDateTime
+                )
+            }
+        } else if (sunPanel.isDifferentTime(skyViewModel.localTime.toSecondOfDay())) {
+            val current = skyViewModel.solarAngle
+            val difference = sunPanel.getAngleDifference(current)
+            if (difference > MINIMUM_DEGREE) {
+                sunPanel.setSolarAngle( current, skyViewModel.localTime)
+            }
         }
-        clockHandsPanel.invalidate()
-        skyPanel.invalidate()
-        sunPanel.invalidate()
     }
 
     /**
@@ -424,15 +448,10 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
      * @param rotate the rotate angle of the Sun (degrees)
      */
     private fun changeDateWithFixedSiderealTime(rotate: Float) {
-        with(skyViewModel) {
-            changeDateWithFixedSiderealTime(rotate)
-            clockBasePanel.dateList = dateList // the position of today is changed
-            skyPanel.siderealAngle = siderealAngle
-            sunPanel.setHourAngleAndCurrentPosition(solarAngle, currentSunPosition)
-        }
-        clockBasePanel.invalidate()
-        skyPanel.invalidate()
-        sunPanel.invalidate()
+        skyViewModel.changeDateWithFixedSiderealTime(rotate)
+        updateClockBasePanel()
+        updateSkyPanel()
+        updateSunPanel()
     }
 
     /**
@@ -441,15 +460,10 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
      * @param rotate the sidereal angle (degrees)
      */
     private fun changeDateWithFixedSolarTime(rotate: Float) {
-        with(skyViewModel) {
-            changeDateWithFixedSolarTime(rotate)
-            clockBasePanel.dateList = dateList // the position of today is changed
-            skyPanel.siderealAngle = siderealAngle
-            sunPanel.setHourAngleAndCurrentPosition(solarAngle, currentSunPosition)
-        }
-        clockBasePanel.invalidate()
-        skyPanel.invalidate()
-        sunPanel.invalidate()
+        skyViewModel.changeDateWithFixedSolarTime(rotate)
+        updateClockBasePanel()
+        updateSkyPanel()
+        updateSunPanel()
     }
 
     /**
@@ -457,13 +471,8 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
      * @param rotate the rotate angle of the Sun (degrees)
      */
     private fun changeSiderealTimeWithFixedDate(rotate: Float) {
-        with(skyViewModel) {
-            changeSiderealTimeWithFixedDate(rotate)
-            skyPanel.siderealAngle = siderealAngle
-            sunPanel.hourAngle = solarAngle
-        }
-        clockBasePanel.invalidate()
-        skyPanel.invalidate()
-        sunPanel.invalidate()
+        skyViewModel.changeSiderealTimeWithFixedDate(rotate)
+        updateSkyPanel()
+        updateSunPanel()
     }
 }

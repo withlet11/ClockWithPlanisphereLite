@@ -26,14 +26,20 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import io.github.withlet11.skyclock.R
-import io.github.withlet11.skyclock.model.SolarAndSiderealTime.DateObject
+import java.time.LocalDate
 import kotlin.math.*
 
 class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(context, attrs) {
+    var currentDate: LocalDate = LocalDate.now()
+        set(value) {
+            if (field != value) {
+                field = value
+                invalidate()
+            }
+        }
+
     private var offset = 0f
     private var direction = false
-    var dateList = listOf<DateObject>()
-    private var dayOfYear = 1
 
     private val paint = Paint().apply { isAntiAlias = true }
     private val bezelColor = context?.getColor(R.color.darkBlue) ?: 0
@@ -118,16 +124,15 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
 
     private fun Canvas.drawDate() {
         val circleY = 341f
-        dateList.forEachIndexed { i, date ->
+        val lengthOfYear = currentDate.lengthOfYear()
+        for (dayOfYear in 1 until lengthOfYear) {
+            val date = LocalDate.ofYearDay(currentDate.year, dayOfYear)
             save()
             // angle + 180 because text is drawn at opposite side
-            rotate((-360f / dateList.size * date.dayOfYear + offset + 180f) * if (direction) -1f else 1f)
+            rotate((-360f / lengthOfYear * dayOfYear + offset + 180f) * if (direction) -1f else 1f)
 
             val (color, r) = when {
-                date.isToday -> {
-                    dayOfYear = i + 1
-                    todayGridColor to 4f
-                }
+                date == currentDate -> todayGridColor to 4f
                 date.dayOfMonth % 10 == 0 -> dayGridColor to 3f
                 date.dayOfMonth % 5 == 0 -> dayGridColor to 2f
                 else -> dayGridColor to 1f
@@ -142,7 +147,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
         }
     }
 
-    private fun Canvas.drawMonth(date: DateObject) {
+    private fun Canvas.drawMonth(date: LocalDate) {
         paint.textSize = 24f
         when (date.dayOfMonth) {
             1 -> {
@@ -163,7 +168,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
             15 -> {
                 paint.color = monthNameColor
                 paint.style = Paint.Style.FILL
-                val monthName = date.monthString
+                val monthName = date.month.name
                 val fontMetrics = paint.fontMetrics
                 val r = 356f - (fontMetrics.ascent + fontMetrics.descent) * 0.5f
                 val ratio = 180f / PI.toFloat() / r
@@ -180,10 +185,9 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
         }
     }
 
-    fun set(offset: Float, direction: Boolean, dateList: List<DateObject>) {
+    fun set(offset: Float, direction: Boolean) {
         this.offset = offset
         this.direction = direction
-        this.dateList = dateList
     }
 
     /**
@@ -202,7 +206,7 @@ class ClockBasePanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(co
      */
     fun isOnTodayGrid(posOnFragment: Pair<Float, Float>): Boolean {
         val rotate =
-            ((-360.0 / dateList.size * dayOfYear + offset) * if (direction) -1.0 else 1.0) / 180.0 * PI
+            ((-360.0 / currentDate.lengthOfYear() * currentDate.dayOfYear + offset) * if (direction) -1.0 else 1.0) / 180.0 * PI
         val position =
             SKY_BACKGROUND_RADIUS * sin(rotate).toFloat() to -SKY_BACKGROUND_RADIUS * cos(rotate).toFloat()
         return posOnFragment.toCanvasXY().isNear(position.toAbsoluteXY())
