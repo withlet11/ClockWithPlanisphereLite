@@ -11,14 +11,12 @@ import android.widget.RemoteViews
 import io.github.withlet11.skyclock.R
 import io.github.withlet11.skyclock.model.NorthernSkyModel
 import io.github.withlet11.skyclock.model.SkyViewModel
+import io.github.withlet11.skyclock.model.SouthernSkyModel
 
 
-/**
- * Implementation of App Widget functionality.
- */
 class SkyClockWidget : AppWidgetProvider() {
     companion object {
-        const val ACTION_UPDATE = "io.github.io.withlet11.skyclock.action.UPDATE"
+        const val ACTION_UPDATE = "io.github.withlet11.skyclock.widget.SkyClockWidget.action.UPDATE"
         private const val INTERVAL = 5000L // mill seconds
 
         fun scheduleUpdate(context: Context) {
@@ -43,22 +41,25 @@ class SkyClockWidget : AppWidgetProvider() {
             alarmManager.cancel(getAlarmIntent(context))
         }
 
-        fun loadPreviousPosition(context: Context): Pair<Double, Double> {
+        fun loadPreviousPosition(context: Context): Triple<Double, Double, Boolean> {
+            var latitude: Double
+            var longitude: Double
+            var isSouthernSky: Boolean
             val previous =
                 context.getSharedPreferences("observation_position", Context.MODE_PRIVATE)
-            var latitude = 0.0
-            var longitude = 0.0
 
             try {
                 latitude = previous.getFloat("latitude", 0f).toDouble()
                 longitude = previous.getFloat("longitude", 0f).toDouble()
+                isSouthernSky = previous.getBoolean("isSouthernSky", false)
             } catch (e: ClassCastException) {
                 latitude = 0.0
                 longitude = 0.0
+                isSouthernSky = false
             } finally {
             }
 
-            return latitude to longitude
+            return Triple(latitude, longitude, isSouthernSky)
         }
     }
 
@@ -71,6 +72,7 @@ class SkyClockWidget : AppWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId)
         }
+
         scheduleUpdate(context)
     }
 
@@ -104,9 +106,14 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val (latitude, longitude) = SkyClockWidget.loadPreviousPosition(context)
+    val (latitude, longitude, isSouthernSky) = SkyClockWidget.loadPreviousPosition(context)
     val skyViewModel =
-        SkyViewModel(context.applicationContext!!, NorthernSkyModel(), latitude, longitude)
+        SkyViewModel(
+            context.applicationContext!!,
+            if (isSouthernSky) SouthernSkyModel() else NorthernSkyModel(),
+            latitude,
+            longitude
+        )
     val clockBasePanel = ClockBasePanel(context)
     val skyPanel = SkyPanel(context)
     val sunPanel = SunPanel(context)
@@ -137,9 +144,6 @@ internal fun updateAppWidget(
     skyPanel.siderealAngle = skyViewModel.siderealAngle
     sunPanel.solarAngle = skyViewModel.solarAngle
 
-    // Constructs the RemoteViews object
-    val views = RemoteViews(context.packageName, R.layout.widget_clock)
-
     // Draws panels
     clockBasePanel.draw()
     skyPanel.draw()
@@ -147,13 +151,16 @@ internal fun updateAppWidget(
     horizonPanel.draw()
     clockHandsPanel.draw()
 
+    // Constructs the RemoteViews object
+    val remoteViews = RemoteViews(context.packageName, R.layout.widget_clock)
+
     // Adds panels to views
-    views.setImageViewBitmap(R.id.widgetClockBasePanel, clockBasePanel.bmp)
-    views.setImageViewBitmap(R.id.widgetSkyPanel, skyPanel.bmp)
-    views.setImageViewBitmap(R.id.widgetSunPanel, sunPanel.bmp)
-    views.setImageViewBitmap(R.id.widgetHorizonPanel, horizonPanel.bmp)
-    views.setImageViewBitmap(R.id.widgetClockHandsPanel, clockHandsPanel.bmp)
+    remoteViews.setImageViewBitmap(R.id.widgetClockBasePanel, clockBasePanel.bmp)
+    remoteViews.setImageViewBitmap(R.id.widgetSkyPanel, skyPanel.bmp)
+    remoteViews.setImageViewBitmap(R.id.widgetSunPanel, sunPanel.bmp)
+    remoteViews.setImageViewBitmap(R.id.widgetHorizonPanel, horizonPanel.bmp)
+    remoteViews.setImageViewBitmap(R.id.widgetClockHandsPanel, clockHandsPanel.bmp)
 
     // Instructs the widget manager to update the widget
-    appWidgetManager.updateAppWidget(appWidgetId, views)
+    appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
 }

@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     var latitude = 0.0
     private var longitude = 0.0
     var isClockHandsVisible = true
+    private var isSouthernSky = false
 
     interface LocationChangeObserver {
         fun onLocationChange(latitude: Double, longitude: Double)
@@ -86,8 +87,17 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        loadPreviousPosition()
+
         val switch: SwitchCompat = findViewById(R.id.view_switch)
+        switch.isChecked = isSouthernSky
         switch.setOnCheckedChangeListener { _, b ->
+            isSouthernSky = b
+            with(getSharedPreferences("observation_position", Context.MODE_PRIVATE).edit()) {
+                putBoolean("isSouthernSky", isSouthernSky)
+                commit()
+            }
+
             val newFragment =
                 (if (b) SouthernSkyClockFragment() else NorthernSkyClockFragment()).apply {
                     arguments = Bundle().apply {
@@ -102,17 +112,16 @@ class MainActivity : AppCompatActivity() {
             transaction.commit()
         }
 
-        loadPreviousPosition()
-
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        val fragment = NorthernSkyClockFragment().apply {
-            arguments = Bundle().apply {
-                putDouble("LATITUDE", latitude)
-                putDouble("LONGITUDE", longitude)
-                putBoolean("CLOCK_HANDS_VISIBILITY", isClockHandsVisible)
+        val fragment =
+            (if (isSouthernSky) SouthernSkyClockFragment() else NorthernSkyClockFragment()).apply {
+                arguments = Bundle().apply {
+                    putDouble("LATITUDE", latitude)
+                    putDouble("LONGITUDE", longitude)
+                    putBoolean("CLOCK_HANDS_VISIBILITY", isClockHandsVisible)
+                }
             }
-        }
 
         fragmentTransaction.replace(R.id.container, fragment)
         fragmentTransaction.commit()
@@ -128,7 +137,6 @@ class MainActivity : AppCompatActivity() {
                 longitude = data.getDoubleExtra("LONGITUDE", 0.0)
             } catch (e: ClassCastException) {
             } finally {
-
                 with(getSharedPreferences("observation_position", Context.MODE_PRIVATE).edit()) {
                     putFloat("latitude", latitude.toFloat())
                     putFloat("longitude", longitude.toFloat())
@@ -146,9 +154,11 @@ class MainActivity : AppCompatActivity() {
         try {
             latitude = previous.getFloat("latitude", 0f).toDouble()
             longitude = previous.getFloat("longitude", 0f).toDouble()
+            isSouthernSky = previous.getBoolean("isSouthernSky", false)
         } catch (e: ClassCastException) {
             latitude = 0.0
             longitude = 0.0
+            isSouthernSky = false
         } finally {
         }
     }
