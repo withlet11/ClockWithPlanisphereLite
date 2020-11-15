@@ -32,4 +32,6 @@
     <string name="gps_is_disable">GPS is disable.</string>
     <string name="no_permission_to_access_location_permanent">No permission to access the location service. Please check the application permission in the system settings.</string>
     <string name="no_permission_to_access_location_once">No permission to access the location service.</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

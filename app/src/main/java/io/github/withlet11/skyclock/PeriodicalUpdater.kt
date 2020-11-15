@@ -27,24 +27,16 @@ import io.github.withlet11.skyclock.fragment.AbstractSkyClockFragment
 
 class PeriodicalUpdater(private val skyClockFragment: AbstractSkyClockFragment) {
     companion object {
-        const val PERIOD = 100L
+        const val PERIOD = 250L
     }
 
     private lateinit var runnable: Runnable
     private val handler = Handler()
-    // private var counter = 0
 
     fun timerSet() {
         runnable = object : Runnable {
             override fun run() {
                 skyClockFragment.updateClockIfClockHandsAreVisible()
-                /*
-                if (++counter > 255) {
-                    skyClockFragment.updateSkyPanel()
-                    counter = 0
-                }
-
-                 */
                 handler.postDelayed(this, PERIOD)
             }
         }

@@ -423,7 +423,7 @@ abstract class AbstractSkyClockFragment : Fragment(), MainActivity.LocationChang
             val current = skyViewModel.solarAngle
             val difference = sunPanel.getAngleDifference(current)
             if (difference > MINIMUM_DEGREE) {
-                sunPanel.setSolarAngle( current, skyViewModel.localTime)
+                sunPanel.setSolarAngle(current, skyViewModel.localTime)
             }
         }
     }
