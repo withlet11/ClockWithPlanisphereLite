@@ -16,7 +16,11 @@ class BootReceiver : BroadcastReceiver() {
                     val ids = appWidgetManager.getAppWidgetIds(
                         ComponentName(context, SkyClockWidget::class.java)
                     )
+                    println("BootReceiver")
                     if (ids.isNotEmpty()) SkyClockWidget.scheduleUpdate(context)
+                    // println("BootReceiver now")
+                    // context.startService(Intent(context, SkyClockWidget.UpdateService::class.java))
+                    // }
                 }
             }
         }

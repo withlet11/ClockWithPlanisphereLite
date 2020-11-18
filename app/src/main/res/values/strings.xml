@@ -34,4 +34,9 @@
     <string name="no_permission_to_access_location_once">No permission to access the location service.</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="clock_base_panel">Clock base panel</string>
+    <string name="sky_panel">Sky panel</string>
+    <string name="sun_panel">Sun panel</string>
+    <string name="horizon_panel">Horizon panel</string>
+    <string name="clock_hands_panel">Clock hands panel</string>
 </resources>

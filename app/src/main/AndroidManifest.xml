@@ -16,6 +16,7 @@
         <receiver android:name=".widget.SkyClockWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <!-- action android:name="io.github.withlet11.skyclock.widget.SkyClockWidget.ACTION_UPDATE" / -->
             </intent-filter>
 
             <meta-data
@@ -35,7 +36,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

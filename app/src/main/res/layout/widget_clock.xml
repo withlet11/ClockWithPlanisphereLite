@@ -8,25 +8,37 @@
     <ImageView
         android:id="@+id/widgetClockBasePanel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/clock_base_panel" />
 
     <ImageView
         android:id="@+id/widgetSkyPanel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/sky_panel" />
 
     <ImageView
         android:id="@+id/widgetSunPanel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/sun_panel" />
 
     <ImageView
         android:id="@+id/widgetHorizonPanel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/horizon_panel" />
 
     <ImageView
         android:id="@+id/widgetClockHandsPanel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/clock_hands_panel" />
+
+    <Button
+        android:id="@+id/launchButton"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@null" />
+
 </FrameLayout>

@@ -22,7 +22,7 @@ class ClockHandsPanel(context: Context) : AbstractPanel() {
         canvas.run {
             drawHourHand()
             drawMinuteHand()
-            // drawSecondHand()
+            drawSecondHand()
         }
     }
 
@@ -37,8 +37,7 @@ class ClockHandsPanel(context: Context) : AbstractPanel() {
 
     private fun Canvas.drawMinuteHand() {
         save()
-        // rotate(180f / 30f * (localTime.minute + localTime.second / 60f + 30f))
-        rotate(180f / 30f * (localTime.minute + 30f))
+        rotate(180f / 30f * (localTime.minute + localTime.second / 60f + 30f))
         paint.color = minuteHandsColor
         paint.style = Paint.Style.FILL
         drawRect(-4f, -40f, 4f, 384f, paint)
