@@ -22,7 +22,7 @@ class ClockHandsPanel(context: Context) : AbstractPanel() {
         canvas.run {
             drawHourHand()
             drawMinuteHand()
-            drawSecondHand()
+            // drawSecondHand()
         }
     }
 

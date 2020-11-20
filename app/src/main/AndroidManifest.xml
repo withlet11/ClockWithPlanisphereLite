@@ -16,18 +16,13 @@
         <receiver android:name=".widget.SkyClockWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <!-- action android:name="io.github.withlet11.skyclock.widget.SkyClockWidget.ACTION_UPDATE" / -->
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/sky_clock_widget_info" />
-        </receiver>
-
-        <receiver android:name=".widget.BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
         </receiver>
         <meta-data
             android:name="com.google.android.gms.version"
