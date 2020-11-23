@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_permission_to_access_location_permanent">位置情報へのアクセスの権限がありません。設定でアプリの権限についてご確認下さい。</string>
+    <string name="no_permission_to_access_location_once">位置情報へのアクセスの権限がありません。</string>
+    <string name="modify">変更</string>
+    <string name="license">使用許諾</string>
+    <string name="locationSettings">観測地設定</string>
+    <string name="opensource_licenses">オープンソースライセンス</string>
+    <string name="latitude">緯度：</string>
+    <string name="longitude">経度：</string>
+    <string name="inGettingLocation">位置情報を取得中…</string>
+    <string name="pleaseCheckIfGPSIsOn">GPSがONかチェックして下さい。</string>
+    <string name="privacy_policy_header">プライバシポリシー</string>
+    <string name="privacy_policy"><u>最終更新：2020-11-20</u>\n\n
+本アプリのご利用に当たりまして、このプライバシポリシーにて個人情報の扱いをご確認下さい。\n\n
+<b>ユーザのデータの収集</b>\n
+本アプリの開発元は個人情報を収集しません。ただし、サードパーティの広告サービス（Google AdMob™）を利用しており、そのサービスが個人情報を収集することがあります。そのプライバシポリシーにつきましては、<a href="https://policies.google.com/privacy">Google privacy polcy</a>でご確認下さい。\n\n
+<b>追加の権限</b>\n
+本アプリは、許可が与えられた場合のみ、位置情報を利用します。そのデータが他のアプリやサービスで利用されることはありません。 広告バナーの表示のためにインターネットが利用されます。\n\n
+<b>変更</b>\n
+このプライバシポリシーは何らかの理由により変更されることがあります。\n\n
+<b>利用にあたっての同意</b>\n
+本プライバシポリシー及びサードパーティのプライバシポリシーに同意の上でご利用下さい。もし、同意いただけない場合は本アプリをアンインストールして下さい。\n\n
+<b>お問い合わせ</b>\n
+プライバシポリシーにつきましてご質問がある場合は<a href="mailto:withlet11@gmail.com">withlet11@gmail.com</a>にお問い合わせ下さい。</string>
+    <string name="clock_base_panel">時計文字盤パネル</string>
+    <string name="sky_panel">星空パネル</string>
+    <string name="sun_panel">太陽パネル</string>
+    <string name="horizon_panel">地平線パネル</string>
+    <string name="clock_hands_panel">時計針パネル</string>
+</resources>

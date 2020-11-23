@@ -44,6 +44,7 @@ class ClockHandsPanel(context: Context) : AbstractPanel() {
         restore()
     }
 
+    @Suppress("unused")
     private fun Canvas.drawSecondHand() {
         save()
         rotate(180f / 30f * (localTime.second + 30f))

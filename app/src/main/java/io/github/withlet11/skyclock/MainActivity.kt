@@ -24,9 +24,14 @@ package io.github.withlet11.skyclock
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import io.github.withlet11.skyclock.fragment.NorthernSkyClockFragment
 import io.github.withlet11.skyclock.fragment.SouthernSkyClockFragment
@@ -37,6 +42,8 @@ class MainActivity : AppCompatActivity() {
     private var longitude = 0.0
     var isClockHandsVisible = true
     private var isSouthernSky = false
+    private val handler = Handler()
+    private var adView: AdView? = null
 
     interface LocationChangeObserver {
         fun onLocationChange(latitude: Double, longitude: Double)
@@ -75,6 +82,9 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra("LONGITUDE", longitude)
                     startActivityForResult(intent, 2)
                 }
+                R.id.item_privacy_policy -> {
+                    startActivity(Intent(application, PrivacyPolicyActivity::class.java))
+                }
                 R.id.item_licenses -> {
                     startActivity(Intent(application, LicenseActivity::class.java))
                 }
@@ -86,6 +96,12 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
+
+        // for ads
+        MobileAds.initialize(this) {}
+        adView = findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+        adView?.loadAd(adRequest)
 
         loadPreviousPosition()
 
@@ -125,6 +141,15 @@ class MainActivity : AppCompatActivity() {
 
         fragmentTransaction.replace(R.id.container, fragment)
         fragmentTransaction.commit()
+
+        val runnable = Runnable {
+            val layout: FrameLayout = findViewById(R.id.frameLayoutForAd)
+            layout.removeView(adView)
+            layout.invalidate()
+            adView = null
+        }
+
+        handler.postDelayed(runnable, 10000)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

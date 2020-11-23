@@ -48,6 +48,7 @@ class ClockHandsPanel(context: Context?, attrs: AttributeSet?) : AbstractPanel(c
     private val minuteHandsColor = context?.getColor(R.color.transparentBlue3) ?: 0
     private val secondHandsColor = context?.getColor(R.color.transparentBlue1) ?: 0
 
+    @Suppress("RedundantOverride")
     override fun performClick(): Boolean {
         return super.performClick()
     }

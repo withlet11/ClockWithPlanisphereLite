@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_descriptor"
@@ -27,6 +29,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6502278727709781~7686374599"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -35,6 +40,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".LocationSettingActivity" />
+        <activity android:name=".PrivacyPolicyActivity" />
         <activity android:name=".LicenseActivity" />
 
         <service
