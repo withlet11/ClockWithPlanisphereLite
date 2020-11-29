@@ -74,8 +74,8 @@ class LocationSettingActivity : AppCompatActivity() {
 
                 latitude = location.latitude
                 longitude = location.longitude
-                latitudeField.text = "%+f".format(latitude)
-                longitudeField.text = "%+f".format(longitude)
+                latitudeField.text = "%+f".format(latitude).replace(",", ".")
+                longitudeField.text = "%+f".format(longitude).replace(",", ".")
                 unlockViewItems()
                 statusField.text = ""
 
@@ -106,7 +106,7 @@ class LocationSettingActivity : AppCompatActivity() {
 
     private fun prepareGUIComponents() {
         latitudeField = findViewById<TextView>(R.id.latitudeField).apply {
-            text = "%+f".format(latitude)
+            text = "%+f".format(latitude).replace(",", ".")
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {}
@@ -121,7 +121,7 @@ class LocationSettingActivity : AppCompatActivity() {
         }
 
         longitudeField = findViewById<TextView>(R.id.longitudeField).apply {
-            text = "%+f".format(longitude)
+            text = "%+f".format(longitude).replace(",", ".")
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {}
@@ -209,13 +209,13 @@ class LocationSettingActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
         ) {
+            statusField.text = getString(R.string.no_permission_to_access_location_permanent)
+        } else {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 REQUEST_PERMISSION
             )
-        } else {
-            statusField.text = getString(R.string.no_permission_to_access_location_permanent)
         }
     }
 
