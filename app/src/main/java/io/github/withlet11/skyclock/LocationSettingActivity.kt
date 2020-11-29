@@ -29,6 +29,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.method.DigitsKeyListener
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
@@ -74,8 +75,8 @@ class LocationSettingActivity : AppCompatActivity() {
 
                 latitude = location.latitude
                 longitude = location.longitude
-                latitudeField.text = "%+f".format(latitude).replace(",", ".")
-                longitudeField.text = "%+f".format(longitude).replace(",", ".")
+                latitudeField.text = "%+f".format(latitude)
+                longitudeField.text = "%+f".format(longitude)
                 unlockViewItems()
                 statusField.text = ""
 
@@ -106,13 +107,16 @@ class LocationSettingActivity : AppCompatActivity() {
 
     private fun prepareGUIComponents() {
         latitudeField = findViewById<TextView>(R.id.latitudeField).apply {
-            text = "%+f".format(latitude).replace(",", ".")
+            keyListener = DigitsKeyListener.getInstance("0123456789.,+-")
+            setAutofillHints("%+.4f".format(23.4567))
+            hint = "%+.4f".format(23.4567)
+            text = "%+f".format(latitude)
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {}
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    latitude = latitudeField.text.toString().toDoubleOrNull()
+                    latitude = latitudeField.text.toString().replace(',', '.').toDoubleOrNull()
                     latitude?.let { if (it > 90.0 || it < -90.0) latitude = null }
                     latitudeField.setTextColor(if (latitude == null) Color.RED else Color.DKGRAY)
                     applyLocationButton.isEnabled = latitude != null && longitude != null
@@ -121,13 +125,16 @@ class LocationSettingActivity : AppCompatActivity() {
         }
 
         longitudeField = findViewById<TextView>(R.id.longitudeField).apply {
-            text = "%+f".format(longitude).replace(",", ".")
+            keyListener = DigitsKeyListener.getInstance("0123456789.,+-")
+            setAutofillHints("%+.3f".format(123.456))
+            hint = "%+.3f".format(123.456)
+            text = "%+f".format(longitude)
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {}
 
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    longitude = longitudeField.text.toString().toDoubleOrNull()
+                    longitude = longitudeField.text.toString().replace(',', '.').toDoubleOrNull()
                     longitude?.let { if (it > 180.0 || it < -180.0) longitude = null }
                     longitudeField.setTextColor(if (longitude == null) Color.RED else Color.DKGRAY)
                     applyLocationButton.isEnabled = latitude != null && longitude != null
