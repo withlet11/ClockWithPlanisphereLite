@@ -3,10 +3,10 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-  <group android:scaleX="0.08931522"
-      android:scaleY="0.08931522"
-      android:translateX="26.61"
-      android:translateY="26.61">
+  <group android:scaleX="0.096847825"
+      android:scaleY="0.096847825"
+      android:translateX="24.3"
+      android:translateY="24.3">
     <group>
       <clip-path
           android:pathData="m0,0l960,0l0,720l-960,0l0,-720z"/>
@@ -147,6 +147,19 @@
           android:pathData="m277.174,305.568l231.118,-194.992l18.268,21.669l-231.118,194.992z"
           android:fillColor="#c9ecf8"
           android:fillType="evenOdd"
+          android:strokeColor="#00000000"
+          android:strokeLineCap="square"/>
+      <path
+          android:pathData="m81.811,344.352l441.102,0l0,164.126l-441.102,0z"
+          android:fillColor="#000000"
+          android:fillAlpha="0"
+          android:fillType="evenOdd"
+          android:strokeColor="#00000000"
+          android:strokeLineCap="square"/>
+      <path
+          android:pathData="m195.335,465.255l50.906,0l0,22.5l-80.156,0l0,-121.328l29.25,0l0,98.828zM286.907,487.755l-28.172,0l0,-90.156l28.172,0l0,90.156zM257.079,374.348q0,-6 4.328,-9.828q4.328,-3.844 11.25,-3.844q6.922,0 11.25,3.844q4.328,3.828 4.328,9.828q0,6 -4.328,9.828q-4.328,3.828 -11.25,3.828q-6.922,0 -11.25,-3.828q-4.328,-3.828 -4.328,-9.828zM336.899,375.177l0,22.422l14.828,0l0,19.5l-14.828,0l0,41.234q0,5.094 1.828,7.094q1.844,2 7.25,2q4.172,0 7,-0.5l0,20.078q-7.578,2.422 -15.828,2.422q-14.5,0 -21.422,-6.828q-6.906,-6.844 -6.906,-20.766l0,-44.734l-11.5,0l0,-19.5l11.5,0l0,-22.422l28.078,0zM406.401,489.427q-20.75,0 -33.594,-12.375q-12.828,-12.375 -12.828,-32.203l0,-2.344q0,-13.828 5.125,-24.406q5.125,-10.594 14.953,-16.375q9.844,-5.797 23.344,-5.797q19,0 30,11.797q11,11.781 11,32.875l0,10.906l-55.828,0q1.5,7.578 6.578,11.922q5.078,4.328 13.156,4.328q13.344,0 20.844,-9.328l12.828,15.156q-5.25,7.25 -14.875,11.547q-9.625,4.297 -20.703,4.297zM403.229,417.598q-12.328,0 -14.656,16.328l28.328,0l0,-2.172q0.156,-6.75 -3.422,-10.453q-3.578,-3.703 -10.25,-3.703z"
+          android:fillColor="#efffc9"
+          android:fillType="nonZero"
           android:strokeColor="#00000000"
           android:strokeLineCap="square"/>
     </group>

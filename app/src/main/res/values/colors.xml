@@ -10,22 +10,23 @@
     <color name="black">#000000</color>
     <color name="darkBlue">#040820</color>
     <color name="midnightBlue">#081040</color>
-    <color name="skyBlue">#80C0FF</color>
-    <color name="lightGray">#CCCCCC</color>
-    <color name="gray">#888888</color>
-    <color name="darkGray">#444444</color>
+    <color name="veryLightAzure">#74BBFB</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="titanium">#878681</color>
+    <color name="graniteGray">#676767</color>
+    <color name="pastelYellow">#FDFD96</color>
     <color name="yellow">#FFFF00</color>
-    <color name="lemon">#C0C020</color>
-    <color name="orange">#FFC020</color>
-    <color name="raspberry">#c02020</color>
+    <color name="dandelion">#F0E130</color>
+    <color name="ripeMango">#FFC324</color>
+    <color name="sprintRed">#EC2131</color>
     <color name="red">#ff0000</color>
 
     <!-- Transparent -->
     <color name="smoke">#80000000</color>
     <color name="transparentWhite">#D8FFFFFF</color>
     <color name="transparentBlue1">#D8A4C2F4</color>
-    <!-- color name="transparentBlue2">#D880C0FF</color -->
-    <color name="transparentBlue3">#D84A86E8</color>
+    <color name="transparentBlue2">#D84A86E8</color>
+    <color name="transparentBlue3">#D01C4587</color>
     <color name="light_blue_50">#FFE1F5FE</color>
     <color name="light_blue_200">#FF81D4FA</color>
     <color name="light_blue_600">#FF039BE5</color>

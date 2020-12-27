@@ -17,10 +17,10 @@
         android:contentDescription="@string/sky_panel" />
 
     <ImageView
-        android:id="@+id/widgetSunPanel"
+        android:id="@+id/widgetSunAndMoonPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/sun_panel" />
+        android:contentDescription="@string/sun_and_moon_panel" />
 
     <ImageView
         android:id="@+id/widgetHorizonPanel"

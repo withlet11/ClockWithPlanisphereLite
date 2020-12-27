@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_name" translatable="false">Sky Clock</string>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">Sky Clock lite</string>
     <string name="locationSettings">Location Settings</string>
     <string name="license">License</string>
     <string name="opensource_licenses">OpenSource Licenses</string>
@@ -8,10 +8,10 @@
     <string name="longitude">"Longitude: "</string>
     <string name="longitudeHint" translatable="false">+123.456</string>
     <string name="gps" translatable="false">GPS</string>
-    <string name="modify">Modify</string>
+    <string name="modify_location">Modify Location</string>
     <string name="inGettingLocation">in getting location…</string>
     <string name="pleaseCheckIfGPSIsOn">Please check if GPS is on.</string>
-    <string name="app_license" translatable="false">Copyright 2020 Yasuhiro Yamakawa &lt;withlet11@gmail.com&gt;\n\n
+    <string name="app_license" translatable="false" tools:ignore="Typos">Copyright 2020 Yasuhiro Yamakawa &lt;withlet11@gmail.com&gt;\n\n
         Permission is hereby granted, free of charge, to any person obtaining a copy of this
         software and associated documentation files (the "Software"), to deal in the Software
         without restriction, including without limitation the rights to use, copy, modify, merge,
@@ -47,16 +47,28 @@
         Privacy Policies you can uninstall this app.\n\n
         <b>Contact Us</b>\n
         If there are any questions regarding this Privacy Policy you may contact us by email:
-        <a href="mailto:withlet11@gmail.com">withlet11@gmail.com</a>
+        <a href="mailto:withlet11@gmail.com" tools:ignore="Typos">withlet11@gmail.com</a>
     </string>
     <string name="north_label" translatable="false">N</string>
     <string name="south_label" translatable="false">S</string>
-    <string name="ns_switch" translatable="false">NS Switch</string>
     <string name="no_permission_to_access_location_permanent">No permission to access the location service. Please check the application permission in the system settings.</string>
     <string name="no_permission_to_access_location_once">No permission to access the location service.</string>
     <string name="clock_base_panel">Clock base panel</string>
     <string name="sky_panel">Sky panel</string>
-    <string name="sun_panel">Sun panel</string>
+    <string name="sun_and_moon_panel">Sun and Moon panel</string>
     <string name="horizon_panel">Horizon panel</string>
     <string name="clock_hands_panel">Clock hands panel</string>
+    <string name="celestial_hemisphere">Celestial hemisphere</string>
+    <string name="clock_hands_visibility">Clock hands visibility</string>
+    <string name="sky_clock_lite_settings">Sky Clock lite settings</string>
+    <string name="attention"><b>Attention:</b>Please add an app widget of Sky Clock lite to the home screen, if you have done it. Settings change may not occur immediately because the sky panel is refreshed not every second but every minute.</string>
+    <string name="display_control">Display Control</string>
+    <plurals name="clockhands_visibility_notice">
+        <item quantity="one">"Clock hands will appear/disappear %d second later</item>
+        <item quantity="other">"Clock hands will appear/disappear %d seconds later</item>
+    </plurals>
+    <plurals name="update_notice">
+        <item quantity="one">"App Widget will be update %d second later</item>
+        <item quantity="other">"App Widget will be update %d seconds later</item>
+    </plurals>
 </resources>
