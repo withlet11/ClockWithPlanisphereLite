@@ -42,7 +42,7 @@ class SkyClockWidget : AppWidgetProvider() {
     companion object {
         const val ACTION_UPDATE =
             "io.github.withlet11.skyclocklite.widget.SkyClockWidget.ACTION_UPDATE"
-        const val PARTIAL_UPDATE_INTERVAL = 5000L // mill seconds
+        const val PARTIAL_UPDATE_INTERVAL = 10000L // mill seconds
         const val FULL_UPDATE_INTERVAL = 60000L // mill seconds
 
         fun scheduleUpdate(context: Context) {
@@ -51,9 +51,7 @@ class SkyClockWidget : AppWidgetProvider() {
             alarmManager.cancel(pendingIntent)
             val triggerAtMills =
                 (System.currentTimeMillis() + 1).let { it + PARTIAL_UPDATE_INTERVAL - it % PARTIAL_UPDATE_INTERVAL }
-            alarmManager.setExact(
-                AlarmManager.RTC, triggerAtMills, pendingIntent
-            )
+            alarmManager.setExact(AlarmManager.RTC, triggerAtMills, pendingIntent)
         }
 
         private fun getAlarmIntent(context: Context): PendingIntent {
