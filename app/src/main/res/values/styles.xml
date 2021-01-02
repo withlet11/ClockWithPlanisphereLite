@@ -7,6 +7,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ToolBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPlainText</item>
+    </style>
+
     <style name="SwitchTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textSize">12sp</item>
         <item name="colorPrimary">@color/colorPrimary</item>

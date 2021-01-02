@@ -17,7 +17,7 @@
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:theme="@style/ToolBarTheme"
             app:titleTextColor="@color/design_default_color_on_primary" />
 
         <TextView

@@ -1,7 +1,7 @@
 /*
  * MainActivity.kt
  *
- * Copyright 2020 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2021 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -36,6 +36,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -74,8 +75,28 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         loadPreviousPosition()
-
         setContentView(R.layout.activity_main)
+
+        val toolbar: Toolbar = findViewById(R.id.my_toolbar)
+        toolbar.setLogo(R.drawable.ic_launcher_foreground)
+        toolbar.setTitle(R.string.app_name)
+
+        toolbar.inflateMenu(R.menu.menu_main)
+
+        toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.item_licenses -> {
+                    startActivity(Intent(application, LicenseActivity::class.java))
+                }
+                R.id.item_credits -> {
+                    startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+                }
+                android.R.id.home -> finish()
+            }
+
+            true
+        }
+
         prepareGUIComponents()
 
         val switch1: SwitchCompat = findViewById(R.id.mode_switch)
@@ -110,16 +131,6 @@ class MainActivity : AppCompatActivity() {
                 resources.getQuantityString(R.plurals.update_notice, delay, delay),
                 Toast.LENGTH_LONG
             ).run { show() }
-        }
-
-        val licenseLabel: TextView = findViewById(R.id.licenseLabel)
-        licenseLabel.setOnClickListener {
-            startActivity(Intent(application, LicenseActivity::class.java))
-        }
-
-        val ossLicenseLabel: TextView = findViewById(R.id.ossLicenseLabel)
-        ossLicenseLabel.setOnClickListener {
-            startActivity(Intent(this, OssLicensesMenuActivity::class.java))
         }
 
         setLocationService()

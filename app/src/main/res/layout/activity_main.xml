@@ -9,14 +9,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:gravity="center|top"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sky_clock_lite_settings"
-            android:textSize="24sp" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ToolBarTheme"
+            app:titleTextColor="@color/design_default_color_on_primary" />
 
         <TextView
             android:id="@+id/textView6"
@@ -132,8 +140,8 @@
                     android:id="@+id/longitudeField"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_column="2"
+                    android:layout_weight="1"
                     android:autofillHints="+123.456"
                     android:ems="10"
                     android:hint="@string/longitudeHint"
@@ -157,21 +165,8 @@
         <TextView
             android:id="@+id/statusField"
             android:layout_width="match_parent"
-            android:layout_height="150dp" />
+            android:layout_height="120dp" />
 
-        <TextView
-            android:id="@+id/licenseLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/license" />
-
-        <TextView
-            android:id="@+id/ossLicenseLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/opensource_licenses" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
