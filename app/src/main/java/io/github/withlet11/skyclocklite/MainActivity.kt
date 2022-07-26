@@ -28,6 +28,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
@@ -202,18 +203,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun setLocationService() {
 
-        locationRequest = LocationRequest().apply {
+        locationRequest = LocationRequest.create().apply {
             interval = MAXIMUM_UPDATE_INTERVAL
             fastestInterval = MINIMUM_UPDATE_INTERVAL
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
         locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                val location = locationResult?.lastLocation ?: return
+            override fun onLocationResult(locationResult: LocationResult) {
+                val location = locationResult.lastLocation
 
-                latitude = location.latitude
-                longitude = location.longitude
+                latitude = location?.latitude
+                longitude = location?.longitude
                 latitudeField.text = "%+f".format(latitude)
                 longitudeField.text = "%+f".format(longitude)
                 unlockViewItems()
@@ -279,7 +280,7 @@ class MainActivity : AppCompatActivity() {
                 fusedLocationClient.requestLocationUpdates(
                     locationRequest,
                     locationCallback,
-                    null
+                    Looper.getMainLooper()
                 )
             } else {
                 unlockViewItems()
@@ -309,6 +310,7 @@ class MainActivity : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startGPS()
