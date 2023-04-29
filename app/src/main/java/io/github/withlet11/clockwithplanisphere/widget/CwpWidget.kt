@@ -1,7 +1,7 @@
 /*
- * SkyClockWidget.kt
+ * CwpWidget.kt
  *
- * Copyright 2020 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.withlet11.skyclocklite.widget
+package io.github.withlet11.clockwithplanispherelite.widget
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -30,18 +30,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.RemoteViews
-import io.github.withlet11.skyclocklite.MainActivity
-import io.github.withlet11.skyclocklite.R
-import io.github.withlet11.skyclocklite.model.NorthernSkyModel
-import io.github.withlet11.skyclocklite.model.SkyViewModel
-import io.github.withlet11.skyclocklite.model.SouthernSkyModel
+import io.github.withlet11.clockwithplanispherelite.MainActivity
+import io.github.withlet11.clockwithplanispherelite.R
+import io.github.withlet11.clockwithplanispherelite.model.NorthernSkyModel
+import io.github.withlet11.clockwithplanispherelite.model.SkyViewModel
+import io.github.withlet11.clockwithplanispherelite.model.SouthernSkyModel
 import java.time.LocalTime
 
 
-class SkyClockWidget : AppWidgetProvider() {
+class CwpWidget : AppWidgetProvider() {
     companion object {
         const val ACTION_UPDATE =
-            "io.github.withlet11.skyclocklite.widget.SkyClockWidget.ACTION_UPDATE"
+            "io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.ACTION_UPDATE"
         const val PARTIAL_UPDATE_INTERVAL = 10000L // mill seconds
         const val FULL_UPDATE_INTERVAL = 60000L // mill seconds
 
@@ -55,9 +55,9 @@ class SkyClockWidget : AppWidgetProvider() {
         }
 
         private fun getAlarmIntent(context: Context): PendingIntent {
-            val intent = Intent(context, SkyClockWidget::class.java)
+            val intent = Intent(context, CwpWidget::class.java)
             intent.action = ACTION_UPDATE
-            return PendingIntent.getBroadcast(context, 0, intent, 0)
+            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
         fun clearUpdate(context: Context) {
@@ -129,11 +129,12 @@ class SkyClockWidget : AppWidgetProvider() {
             Intent.ACTION_BOOT_COMPLETED -> {
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 val ids = appWidgetManager.getAppWidgetIds(
-                    ComponentName(context, SkyClockWidget::class.java)
+                    ComponentName(context, CwpWidget::class.java)
                 )
                 if (ids.isNotEmpty()) scheduleUpdate(context)
                 super.onReceive(context, intent)
             }
+
             else -> super.onReceive(context, intent)
         }
     }
@@ -158,7 +159,7 @@ internal fun updateAppWidget(
 ) {
     val remoteViews = RemoteViews(context.packageName, R.layout.widget_clock)
     val intent = Intent(context, MainActivity::class.java)
-    val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+    val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     remoteViews.setOnClickPendingIntent(R.id.launchButton, pendingIntent)
     appWidgetManager.updateAppWidget(appWidgetIds, remoteViews)
 
@@ -174,7 +175,7 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val (location, mode) = SkyClockWidget.loadPreviousPosition(context)
+    val (location, mode) = CwpWidget.loadPreviousPosition(context)
     val (latitude, longitude) = location
     val (isSouthernSky, isClockHandsVisible) = mode
     val skyViewModel =
@@ -245,7 +246,7 @@ internal fun updateAppWidgetPartially(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    val isClockHandsVisible = SkyClockWidget.loadPreviousPosition(context).second.second
+    val isClockHandsVisible = CwpWidget.loadPreviousPosition(context).second.second
     val clockHandsPanel = ClockHandsPanel(context)
     if (isClockHandsVisible) {
         clockHandsPanel.localTime = LocalTime.now()

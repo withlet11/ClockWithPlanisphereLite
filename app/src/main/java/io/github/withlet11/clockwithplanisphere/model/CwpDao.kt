@@ -1,9 +1,9 @@
-package io.github.withlet11.skyclocklite.model
+package io.github.withlet11.clockwithplanispherelite.model
 
 import androidx.room.*
 
 @Dao
-interface SkyClockDao {
+interface CwpDao {
     @Query("SELECT * FROM `hip_list`")
     fun getAllHip(): List<AbstractSkyModel.HipEntry>
 

@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
-    android:theme="@style/ThemeOverlay.SkyClock.AppWidgetContainer">
+    android:theme="@style/ThemeOverlay.ClockWithPlanisphere.AppWidgetContainer">
 
     <ImageView
         android:id="@+id/widgetClockBasePanel"

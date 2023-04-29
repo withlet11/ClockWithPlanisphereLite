@@ -41,7 +41,7 @@ android {
             signingConfig signingConfigs.config
         }
     }
-    namespace 'io.github.withlet11.skyclocklite'
+    namespace 'io.github.withlet11.clockwithplanispherelite'
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

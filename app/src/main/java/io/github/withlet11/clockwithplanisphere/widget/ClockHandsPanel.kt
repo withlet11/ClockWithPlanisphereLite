@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.withlet11.skyclocklite.widget
+package io.github.withlet11.clockwithplanispherelite.widget
 
 import android.content.Context
 import android.graphics.*
-import io.github.withlet11.skyclocklite.R
+import io.github.withlet11.clockwithplanispherelite.R
 import java.time.LocalTime
 
 class ClockHandsPanel(context: Context) : AbstractPanel() {

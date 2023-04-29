@@ -1,7 +1,7 @@
 /*
  * AbstractSkyModel.kt
  *
- * Copyright 2020 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.withlet11.skyclocklite.model
+package io.github.withlet11.clockwithplanispherelite.model
 
 import android.content.Context
 import androidx.room.ColumnInfo
@@ -110,21 +110,21 @@ abstract class AbstractSkyModel {
 
     var milkyWayDotSize = (1.0 / ANGLE_LIMIT).toFloat()
 
-    protected lateinit var skyClockDao: SkyClockDao
-    private lateinit var dataBase: SkyClockDataBase
+    protected lateinit var cwpDao: CwpDao
+    private lateinit var dataBase: CwpDataBase
 
     fun loadDatabase(context: Context) {
-        dataBase = SkyClockDataBase.getInstance(context)
-        skyClockDao = dataBase.skyClockDao()
+        dataBase = CwpDataBase.getInstance(context)
+        cwpDao = dataBase.cwpDao()
     }
 
     open fun updatePositionList() {
-        starGeometryList = skyClockDao.getAllHip().mapNotNull { (_, ra, dec, radius) ->
+        starGeometryList = cwpDao.getAllHip().mapNotNull { (_, ra, dec, radius) ->
             calculateStarPosition(dec, ra, radius)
         }
 
         constellationLineList =
-            skyClockDao.getAllConstellationLines().mapNotNull { (_, ra1, dec1, ra2, dec2) ->
+            cwpDao.getAllConstellationLines().mapNotNull { (_, ra1, dec1, ra2, dec2) ->
                 val xy1 = convertToXYPositionWithNull(dec1, -ra1)
                 val xy2 = convertToXYPositionWithNull(dec2, -ra2)
                 if (xy1 != null && xy2 != null) ConstellationLineGeometry(

@@ -1,4 +1,4 @@
-package io.github.withlet11.skyclock
+package io.github.withlet11.clockwithplanisphere
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("io.github.withlet11.skyclocklite", appContext.packageName)
+        assertEquals("io.github.withlet11.clockwithplanspherelite", appContext.packageName)
     }
 }

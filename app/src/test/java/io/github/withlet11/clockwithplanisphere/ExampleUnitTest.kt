@@ -1,4 +1,4 @@
-package io.github.withlet11.skyclock
+package io.github.withlet11.clockwithplanisphere
 
 import org.junit.Test
 

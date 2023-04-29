@@ -1,7 +1,7 @@
 /*
  * HorizonPanel.kt
  *
- * Copyright 2020 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,14 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.withlet11.skyclocklite.widget
+package io.github.withlet11.clockwithplanispherelite.widget
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Path
-import io.github.withlet11.skyclocklite.R
+import io.github.withlet11.clockwithplanispherelite.R
 
 class HorizonPanel(context: Context) : AbstractPanel() {
     private var horizon = listOf<Pair<Float, Float>>()

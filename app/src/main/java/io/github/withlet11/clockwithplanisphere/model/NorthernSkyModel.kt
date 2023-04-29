@@ -1,7 +1,7 @@
 /*
- * LicenseActivity.kt
+ * NorthernSkyModel.kt
  *
- * Copyright 2020 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,25 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.withlet11.skyclocklite
+package io.github.withlet11.clockwithplanispherelite.model
 
-import android.os.Bundle
-import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
+import java.lang.Math.toRadians
+import kotlin.math.PI
 
+class NorthernSkyModel : AbstractSkyModel() {
+    override val tenMinuteGridStep = 180f / 72f
+    override fun toAngle(declination: Double): Double = 180.0 - declination
+    override fun toDeclinationFromPole(angle: Int): Int = 90 - angle
+    override fun toRadius(declination: Double): Double = (90.0 - declination) / maxAngle
+    override fun toRadiansFromHours(hour: Double): Double = hour / 12.0 * PI
+    override fun toRadiansFromDegrees(degree: Double): Double = toRadians(degree)
 
-class LicenseActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_license)
-
-        setSupportActionBar(findViewById(R.id.my_toolbar3)) // ToolBar instead of ActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun updatePositionList() {
+        super.updatePositionList()
+        milkyWayDotList = cwpDao.getNorthMilkyWay().mapNotNull { (_, x, y, argb) ->
+            makeMilkyWayDot(x, y, argb)
+        }
     }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) finish()
-        return true
-    }
-
 }

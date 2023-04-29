@@ -30,7 +30,7 @@
     <string name="clock_hands_panel">時計針パネル</string>
     <string name="celestial_hemisphere">北天／南天</string>
     <string name="clock_hands_visibility">時計の針の表示</string>
-    <string name="sky_clock_lite_settings">Sky Clock liteの設定</string>
+    <string name="clock_with_planisphere_lite_settings">Clock with Planisphere liteの設定</string>
     <string name="attention">"<b>注意：</b>ホーム画面へのウィジェットの追加が必要です。追加がまだの場合は、ホーム画面の設定でウィジェットの追加を行って下さい。また、星空パネルの更新は1分ごとですので、設定の反映が即座に行われないことがあります。"</string>
     <string name="display_control">表示設定</string>
     <plurals name="clockhands_visibility_notice">

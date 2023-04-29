@@ -1,4 +1,4 @@
-package io.github.withlet11.skyclocklite.model
+package io.github.withlet11.clockwithplanispherelite.model
 
 import android.content.Context
 import androidx.room.Database
@@ -15,22 +15,22 @@ import androidx.room.RoomDatabase
     version = 3,
     exportSchema = false
 )
-abstract class SkyClockDataBase : RoomDatabase() {
-    abstract fun skyClockDao(): SkyClockDao
+abstract class CwpDataBase : RoomDatabase() {
+    abstract fun cwpDao(): CwpDao
 
     companion object {
         @Volatile
-        private var INSTANCE: SkyClockDataBase? = null
+        private var INSTANCE: CwpDataBase? = null
 
-        fun getInstance(context: Context): SkyClockDataBase {
+        fun getInstance(context: Context): CwpDataBase {
             println("Getting database")
             return INSTANCE ?: synchronized(this) {
                 println("Creating database")
                 INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
-                    SkyClockDataBase::class.java,
-                    "skyclock.db"
-                ).createFromAsset("skyclock.db")
+                    CwpDataBase::class.java,
+                    "clockwithplanisphere.db"
+                ).createFromAsset("clockwithplanisphere.db")
                     .fallbackToDestructiveMigration()
                     .allowMainThreadQueries()
                     .build().also {

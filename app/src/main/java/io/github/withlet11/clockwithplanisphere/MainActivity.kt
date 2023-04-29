@@ -1,7 +1,7 @@
 /*
  * MainActivity.kt
  *
- * Copyright 2020-2021 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package io.github.withlet11.skyclocklite
+package io.github.withlet11.clockwithplanispherelite
 
 import android.Manifest
 import android.content.Context
@@ -41,8 +41,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import io.github.withlet11.skyclocklite.widget.SkyClockWidget.Companion.FULL_UPDATE_INTERVAL
-import io.github.withlet11.skyclocklite.widget.SkyClockWidget.Companion.PARTIAL_UPDATE_INTERVAL
+import io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.Companion.FULL_UPDATE_INTERVAL
+import io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.Companion.PARTIAL_UPDATE_INTERVAL
 
 
 class MainActivity : AppCompatActivity() {

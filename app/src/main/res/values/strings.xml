@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">Sky Clock lite</string>
+    <string name="app_name" translatable="false">Clock with Planisphere lite</string>
     <string name="locationSettings">Location Settings</string>
     <string name="license">License</string>
     <string name="opensource_licenses">OpenSource Licenses</string>
@@ -11,7 +11,7 @@
     <string name="modify_location">Modify Location</string>
     <string name="inGettingLocation">in getting location…</string>
     <string name="pleaseCheckIfGPSIsOn">Please check if GPS is on.</string>
-    <string name="app_license" translatable="false" tools:ignore="Typos">Copyright 2020-2021 Yasuhiro Yamakawa &lt;withlet11@gmail.com&gt;\n\n
+    <string name="app_license" translatable="false" tools:ignore="Typos">Copyright 2020-2023 Yasuhiro Yamakawa &lt;withlet11@gmail.com&gt;\n\n
         Permission is hereby granted, free of charge, to any person obtaining a copy of this
         software and associated documentation files (the "Software"), to deal in the Software
         without restriction, including without limitation the rights to use, copy, modify, merge,
@@ -60,8 +60,8 @@
     <string name="clock_hands_panel">Clock hands panel</string>
     <string name="celestial_hemisphere">Celestial hemisphere</string>
     <string name="clock_hands_visibility">Clock hands visibility</string>
-    <string name="sky_clock_lite_settings">Sky Clock lite settings</string>
-    <string name="attention"><b>Attention:</b>Please add an app widget of Sky Clock lite to the home screen, if you have done it. Settings change may not occur immediately because the sky panel is refreshed not every second but every minute.</string>
+    <string name="clock_with_planisphere_lite_settings">Clock with Planisphere lite settings</string>
+    <string name="attention"><b>Attention:</b>Please add an app widget of Clock with Planisphere lite to the home screen, if you have done it. Settings change may not occur immediately because the sky panel is refreshed not every second but every minute.</string>
     <string name="display_control">Display Control</string>
     <plurals name="clockhands_visibility_notice">
         <item quantity="one">"Clock hands will appear/disappear %d second later</item>
