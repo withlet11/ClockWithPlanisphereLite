@@ -1,5 +1,5 @@
-# Clock with Planisphere lite
-This is a clock app widget with a planisphere for Android. The planisphere shows the current sky at the observation location by setting the latitude and the longitude. You can switch the northern and southern celestial hemispheres.
+# Sky Clock lite
+This is a clock app widget with a planisphere for Android. The planisphere shows the current sky at the observation location by setting the latitude and the longitude. You can switch the northern and southern celestial hemispheres. This app has no ads, but you cannot choose the date and time of observation.
 
 ## Requirement
 API 26 (Android 8.0) or later
@@ -19,5 +19,5 @@ API 26 (Android 8.0) or later
 ## Usage
 
 ### App widget and configure
-* Please put an app widget of Clock with Planisphere lite at the home screen. Tap an app widget or an icon of Clock with Planisphere lite to show a screen for the configuration. App widgets are not updated soon after changes of settings. The clock is update every 10 seconds and the planispher is updated every minute.
+* Please put an app widget of Sky Clock lite at the home screen. Tap an app widget or an icon of Sky Clock lite to show a screen for the configuration. App widgets are not updated soon after changes of settings. The clock is update every 10 seconds and the planispher is updated every minute.
 
