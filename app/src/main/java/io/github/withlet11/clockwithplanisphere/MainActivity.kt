@@ -202,12 +202,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setLocationService() {
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, MAXIMUM_UPDATE_INTERVAL)
+            .setMinUpdateIntervalMillis(MINIMUM_UPDATE_INTERVAL)
+            .setWaitForAccurateLocation(true)
+            .build()
 
-        locationRequest = LocationRequest.create().apply {
-            interval = MAXIMUM_UPDATE_INTERVAL
-            fastestInterval = MINIMUM_UPDATE_INTERVAL
-            priority = Priority.PRIORITY_HIGH_ACCURACY
-        }
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {

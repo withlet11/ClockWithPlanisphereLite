@@ -51,7 +51,20 @@ class CwpWidget : AppWidgetProvider() {
             alarmManager.cancel(pendingIntent)
             val triggerAtMills =
                 (System.currentTimeMillis() + 1).let { it + PARTIAL_UPDATE_INTERVAL - it % PARTIAL_UPDATE_INTERVAL }
-            alarmManager.setExact(AlarmManager.RTC, triggerAtMills, pendingIntent)
+            /*
+            when {
+                // If permission is granted, proceed with scheduling exact alarms.
+                alarmManager.canScheduleExactAlarms() -> {
+             */
+                    alarmManager.setExact(AlarmManager.RTC, triggerAtMills, pendingIntent)
+            /*
+                }
+                else -> {
+                    // Ask users to go to exact alarm page in system settings.
+                    startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+                }
+            }
+             */
         }
 
         private fun getAlarmIntent(context: Context): PendingIntent {
@@ -123,7 +136,7 @@ class CwpWidget : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context?, intent: Intent) {
-        if (context == null) super.onReceive(context, intent)
+        if (context == null) super.onReceive(null, intent)
         else when (intent.action) {
             ACTION_UPDATE -> onUpdate(context)
             Intent.ACTION_BOOT_COMPLETED -> {
