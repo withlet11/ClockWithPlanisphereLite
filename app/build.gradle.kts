@@ -32,6 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "io.github.withlet11.skyclocklite"
+        targetSdk = 35
         minSdk = 26
         versionCode = 5
         versionName = "1.4"
