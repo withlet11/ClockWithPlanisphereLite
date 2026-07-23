@@ -1,7 +1,7 @@
 /*
  * SkyPanel.kt
  *
- * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2026 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -31,6 +31,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sign
 import kotlin.math.sin
+import androidx.core.graphics.withSave
 
 class SkyPanel(context: Context) : AbstractPanel() {
     private var starGeometryList = listOf<AbstractSkyModel.StarGeometry>()
@@ -144,25 +145,26 @@ class SkyPanel(context: Context) : AbstractPanel() {
         val fontMetrics = paint.fontMetrics
 
         for (i in 0..143) {
-            save()
-            // angle + 180 because text is drawn at opposite side
-            rotate(i * tenMinuteGridStep + 180f)
+            withSave {
+                // angle + 180 because text is drawn at opposite side
+                rotate(i * tenMinuteGridStep + 180f)
 
-            when {
-                i % 6 == 0 -> {
-                    val text = (i / 6).toString()
-                    val textWidth = paint.measureText(text)
-                    // positive height means opposite side
-                    drawText(
-                        text,
-                        -textWidth * 0.5f,
-                        -fontMetrics.descent + SKY_BACKGROUND_RADIUS,
-                        paint
-                    )
+                when {
+                    i % 6 == 0 -> {
+                        val text = (i / 6).toString()
+                        val textWidth = paint.measureText(text)
+                        // positive height means opposite side
+                        drawText(
+                            text,
+                            -textWidth * 0.5f,
+                            -fontMetrics.descent + SKY_BACKGROUND_RADIUS,
+                            paint
+                        )
+                    }
+
+                    else -> drawCircle(0f, 326f, 2f, paint)
                 }
-                else -> drawCircle(0f, 326f, 2f, paint)
             }
-            restore()
         }
     }
 

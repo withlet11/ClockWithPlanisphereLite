@@ -1,7 +1,7 @@
 /*
  * SunAndMoonPanel.kt
  *
- * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2026 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -29,6 +29,7 @@ import io.github.withlet11.clockwithplanispherelite.R
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sign
+import androidx.core.graphics.withSave
 
 class SunAndMoonPanel(context: Context) : AbstractPanel() {
     private var analemma = listOf<Pair<Float, Float>>()
@@ -59,12 +60,12 @@ class SunAndMoonPanel(context: Context) : AbstractPanel() {
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         canvas.run {
-            save()
-            rotate(rotateAngleOfSun, 0f, 0f)
-            drawAnalemma()
-            drawMonthlyPosition()
-            drawCurrentPosition()
-            restore()
+            withSave {
+                rotate(rotateAngleOfSun, 0f, 0f)
+                drawAnalemma()
+                drawMonthlyPosition()
+                drawCurrentPosition()
+            }
             drawMoon()
         }
     }
@@ -111,26 +112,26 @@ class SunAndMoonPanel(context: Context) : AbstractPanel() {
     }
 
     private fun Canvas.drawMoon() {
-        save()
-        rotate(rotateAngleOfMoon, 0f, 0f)
-        translate(moonPosition.first.toCanvas(), moonPosition.second.toCanvas())
-        rotate(
-            rotateAngleOfSun - rotateAngleOfMoon -
-                    if (tenMinuteGridStep > 0.0) (180 - differenceOfLongitude.toFloat())
-                    else differenceOfLongitude.toFloat()
-        )
-        paint.style = Paint.Style.FILL
-        val phase = abs(cos(Math.toRadians(differenceOfLongitude)).toFloat() * MOON_RADIUS)
-        val (isFirstHalf, color) = when {
-            differenceOfLongitude < 90 -> true to moonDarkSideColor
-            differenceOfLongitude < 180 -> true to moonColor
-            differenceOfLongitude < 270 -> false to moonColor
-            else -> false to moonDarkSideColor
+        withSave {
+            rotate(rotateAngleOfMoon, 0f, 0f)
+            translate(moonPosition.first.toCanvas(), moonPosition.second.toCanvas())
+            rotate(
+                rotateAngleOfSun - rotateAngleOfMoon -
+                        if (tenMinuteGridStep > 0.0) (180 - differenceOfLongitude.toFloat())
+                        else differenceOfLongitude.toFloat()
+            )
+            paint.style = Paint.Style.FILL
+            val phase = abs(cos(Math.toRadians(differenceOfLongitude)).toFloat() * MOON_RADIUS)
+            val (isFirstHalf, color) = when {
+                differenceOfLongitude < 90 -> true to moonDarkSideColor
+                differenceOfLongitude < 180 -> true to moonColor
+                differenceOfLongitude < 270 -> false to moonColor
+                else -> false to moonDarkSideColor
+            }
+            drawHalfMoon(isFirstHalf)
+            paint.color = color
+            drawOval(-phase, -MOON_RADIUS, phase, MOON_RADIUS, paint)
         }
-        drawHalfMoon(isFirstHalf)
-        paint.color = color
-        drawOval(-phase, -MOON_RADIUS, phase, MOON_RADIUS, paint)
-        restore()
     }
 
     private fun Canvas.drawHalfMoon(isFirstHalf: Boolean) {

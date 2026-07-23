@@ -1,7 +1,7 @@
 /*
  * ClockHandsPanel.kt
  *
- * Copyright 2020 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2026 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -25,6 +25,7 @@ import android.content.Context
 import android.graphics.*
 import io.github.withlet11.clockwithplanispherelite.R
 import java.time.LocalTime
+import androidx.core.graphics.withSave
 
 class ClockHandsPanel(context: Context) : AbstractPanel() {
     var localTime: LocalTime = LocalTime.MIDNIGHT
@@ -149,64 +150,64 @@ class ClockHandsPanel(context: Context) : AbstractPanel() {
     }
 
     private fun Canvas.drawHourHand() {
-        save()
-        translate(5f, 5f)
-        rotate(180f / 6f * (localTime.toSecondOfDay() / 3600f + 6f))
-        paint.maskFilter = BlurMaskFilter(2f, BlurMaskFilter.Blur.NORMAL)
-        paint.color = shadow
-        paint.style = Paint.Style.FILL
-        hourHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
-        hourHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
-        drawPath(path, paint)
-        path.reset()
-        restore()
-        save()
-        rotate(180f / 6f * (localTime.toSecondOfDay() / 3600f + 6f))
-        paint.maskFilter = null
-        paint.color = hourHandsColor
-        paint.style = Paint.Style.FILL
-        hourHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
-        hourHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
-        drawPath(path, paint)
-        path.reset()
-        restore()
+        withSave {
+            translate(5f, 5f)
+            rotate(180f / 6f * (localTime.toSecondOfDay() / 3600f + 6f))
+            paint.maskFilter = BlurMaskFilter(2f, BlurMaskFilter.Blur.NORMAL)
+            paint.color = shadow
+            paint.style = Paint.Style.FILL
+            hourHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
+            hourHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
+            drawPath(path, paint)
+            path.reset()
+        }
+        withSave {
+            rotate(180f / 6f * (localTime.toSecondOfDay() / 3600f + 6f))
+            paint.maskFilter = null
+            paint.color = hourHandsColor
+            paint.style = Paint.Style.FILL
+            hourHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
+            hourHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
+            drawPath(path, paint)
+            path.reset()
+        }
     }
 
     private fun Canvas.drawMinuteHand() {
-        save()
-        translate(5f, 5f)
-        rotate(180f / 30f * (localTime.minute + localTime.second / 60f + 30f))
-        paint.maskFilter = BlurMaskFilter(2f, BlurMaskFilter.Blur.NORMAL)
-        paint.color = shadow
-        paint.style = Paint.Style.FILL
-        minuteHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
-        minuteHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
-        drawPath(path, paint)
-        path.reset()
-        restore()
-        save()
-        rotate(180f / 30f * (localTime.minute + localTime.second / 60f + 30f))
-        paint.maskFilter = null
-        paint.color = minuteHandsColor
-        paint.style = Paint.Style.FILL
-        minuteHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
-        minuteHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
-        drawPath(path, paint)
-        path.reset()
-        restore()
+        withSave {
+            translate(5f, 5f)
+            rotate(180f / 30f * (localTime.minute + localTime.second / 60f + 30f))
+            paint.maskFilter = BlurMaskFilter(2f, BlurMaskFilter.Blur.NORMAL)
+            paint.color = shadow
+            paint.style = Paint.Style.FILL
+            minuteHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
+            minuteHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
+            drawPath(path, paint)
+            path.reset()
+        }
+        withSave {
+            rotate(180f / 30f * (localTime.minute + localTime.second / 60f + 30f))
+            paint.maskFilter = null
+            paint.color = minuteHandsColor
+            paint.style = Paint.Style.FILL
+            minuteHandGeometries.last().let { (x, y) -> path.moveTo(x, y) }
+            minuteHandGeometries.forEach { (x, y) -> path.lineTo(x, y) }
+            drawPath(path, paint)
+            path.reset()
+        }
     }
 
     private fun Canvas.drawSecondHand() {
-        save()
-        translate(5f, 5f)
-        paint.color = shadow
-        paint.style = Paint.Style.FILL
-        drawCircle(0f, 0f, 12f, paint)
-        restore()
-        save()
-        paint.color = secondHandsColor
-        paint.style = Paint.Style.FILL
-        drawCircle(0f, 0f, 12f, paint)
-        restore()
+        withSave {
+            translate(5f, 5f)
+            paint.color = shadow
+            paint.style = Paint.Style.FILL
+            drawCircle(0f, 0f, 12f, paint)
+        }
+        withSave {
+            paint.color = secondHandsColor
+            paint.style = Paint.Style.FILL
+            drawCircle(0f, 0f, 12f, paint)
+        }
     }
 }

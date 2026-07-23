@@ -1,7 +1,7 @@
 /*
  * AbstractPanel.kt
  *
- * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2026 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -23,6 +23,7 @@ package io.github.withlet11.clockwithplanispherelite.widget
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import androidx.core.graphics.createBitmap
 
 abstract class AbstractPanel {
     companion object {
@@ -43,7 +44,7 @@ abstract class AbstractPanel {
     }
 
     val bmp: Bitmap =
-        Bitmap.createBitmap(PREFERRED_SIZE.toInt(), PREFERRED_SIZE.toInt(), Bitmap.Config.ARGB_8888)
+        createBitmap(PREFERRED_SIZE.toInt(), PREFERRED_SIZE.toInt())
 
     open fun draw(canvas: Canvas) {
         canvas.translate(CENTER, CENTER)

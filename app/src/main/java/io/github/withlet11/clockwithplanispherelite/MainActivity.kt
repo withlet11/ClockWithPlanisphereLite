@@ -1,7 +1,7 @@
 /*
  * MainActivity.kt
  *
- * Copyright 2020-2023 Yasuhiro Yamakawa <withlet11@gmail.com>
+ * Copyright 2020-2026 Yasuhiro Yamakawa <withlet11@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -22,7 +22,6 @@
 package io.github.withlet11.clockwithplanispherelite
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -43,6 +42,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.Companion.FULL_UPDATE_INTERVAL
 import io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.Companion.PARTIAL_UPDATE_INTERVAL
+import androidx.core.content.edit
 
 
 class MainActivity : AppCompatActivity() {
@@ -104,9 +104,8 @@ class MainActivity : AppCompatActivity() {
         switch1.isChecked = isClockHandsVisible
         switch1.setOnCheckedChangeListener { _, b ->
             isClockHandsVisible = b
-            with(getSharedPreferences(OBSERVATION_POSITION, Context.MODE_PRIVATE).edit()) {
+            getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
                 putBoolean(IS_CLOCK_HANDS_VISIBLE, isClockHandsVisible)
-                apply()
             }
             val delay =
                 ((System.currentTimeMillis() + 1).let { PARTIAL_UPDATE_INTERVAL - it % PARTIAL_UPDATE_INTERVAL } / 1000).toInt()
@@ -121,9 +120,8 @@ class MainActivity : AppCompatActivity() {
         switch2.isChecked = isSouthernSky
         switch2.setOnCheckedChangeListener { _, b ->
             isSouthernSky = b
-            with(getSharedPreferences(OBSERVATION_POSITION, Context.MODE_PRIVATE).edit()) {
+            getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
                 putBoolean(IS_SOUTHERN_SKY, isSouthernSky)
-                apply()
             }
             val delay =
                 ((System.currentTimeMillis() + 1).let { FULL_UPDATE_INTERVAL - it % FULL_UPDATE_INTERVAL } / 1000).toInt()
@@ -177,10 +175,9 @@ class MainActivity : AppCompatActivity() {
         applyLocationButton = findViewById<Button>(R.id.applyLocationButton).apply {
             setOnClickListener {
                 if (latitude != null && longitude != null) {
-                    getSharedPreferences(OBSERVATION_POSITION, Context.MODE_PRIVATE).edit().run {
+                    getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
                         putFloat(LATITUDE, latitude!!.toFloat())
                         putFloat(LONGITUDE, longitude!!.toFloat())
-                        apply()
                     }
                 }
 
@@ -227,14 +224,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadPreviousPosition() {
-        val previous = getSharedPreferences(OBSERVATION_POSITION, Context.MODE_PRIVATE)
+        val previous = getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE)
 
         try {
             latitude = previous.getFloat(LATITUDE, 0f).toDouble()
             longitude = previous.getFloat(LONGITUDE, 0f).toDouble()
             isSouthernSky = previous.getBoolean(IS_SOUTHERN_SKY, false)
             isClockHandsVisible = previous.getBoolean(IS_CLOCK_HANDS_VISIBLE, true)
-        } catch (e: ClassCastException) {
+        } catch (_: ClassCastException) {
             latitude = 0.0
             longitude = 0.0
             isSouthernSky = false
