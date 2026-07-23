@@ -3,7 +3,6 @@ import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("com.google.devtools.ksp")
     id("com.google.android.gms.oss-licenses-plugin")
 }
@@ -61,7 +60,6 @@ kotlin {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -71,11 +69,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.core)
-    androidTestImplementation(libs.androidx.core)
+    // androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.junit.v4132)
-    testImplementation(libs.androidx.junit)
+    // testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.truth)
     testImplementation(libs.truth)
 

@@ -31,7 +31,7 @@ abstract class CwpDataBase : RoomDatabase() {
                     CwpDataBase::class.java,
                     "clockwithplanisphere.db"
                 ).createFromAsset("clockwithplanisphere.db")
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
                     .allowMainThreadQueries()
                     .build().also {
                         INSTANCE = it

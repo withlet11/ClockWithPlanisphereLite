@@ -1,5 +1,6 @@
 [versions]
 junitJunit = "4.13.2"
+kotlinGradlePlugin = "2.4.10"
 kotlinStdlibVersion = "2.4.10"
 legacySupportV4 = "1.0.0"
 roomCompiler = "2.8.4"
@@ -26,6 +27,7 @@ androidx-core = { module = "androidx.test:core", version.ref = "core" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+jetbrains-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
 junit-v4132 = { module = "junit:junit", version.ref = "junitJunit" }
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
