@@ -1,6 +1,6 @@
 [versions]
 junitJunit = "4.13.2"
-kotlinStdlibVersion = "2.3.20"
+kotlinStdlibVersion = "2.4.10"
 legacySupportV4 = "1.0.0"
 roomCompiler = "2.8.4"
 roomKtx = "2.8.4"
