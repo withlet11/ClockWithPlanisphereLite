@@ -36,7 +36,7 @@
         service may collect your information. The privacy policy can be read on the following page:
             <a href="https://policies.google.com/privacy">Google privacy policy</a>\n\n
         <b>Additional permissions</b>\n
-        This application accesses your geo-location information, only if you permit. That data
+        This application accesses your geolocation information, only if you permit. That data
         is stored at your device only, and never provided to any other applications or services.\n
         Internet is used to display advertisement banners.\n\n
         <b>Changes</b>\n
@@ -68,7 +68,7 @@
         <item quantity="other">"Clock hands will appear/disappear %d seconds later</item>
     </plurals>
     <plurals name="update_notice">
-        <item quantity="one">"App Widget will be update %d second later</item>
-        <item quantity="other">"App Widget will be update %d seconds later</item>
+        <item quantity="one">"App Widget will be updated %d second later</item>
+        <item quantity="other">"App Widget will be updated %d seconds later</item>
     </plurals>
 </resources>
