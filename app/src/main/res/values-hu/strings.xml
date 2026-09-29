@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_permission_to_access_location_permanent">Nincs engedély a helyadatokhoz való hozzáféréshez. Ellenőrizze az alkalmazás engedélyeit a rendszerbeállításokban.</string>
+    <string name="no_permission_to_access_location_once">Nincs engedély a helyadatokhoz való hozzáféréshez.</string>
+    <string name="modify_location">Módosítás</string>
+    <string name="license">Licenc</string>
+    <string name="locationSettings">Megfigyelési hely beállítása</string>
+    <string name="opensource_licenses">Nyílt forráskódú licencek</string>
+    <string name="latitude">Szélesség: </string>
+    <string name="longitude">Hosszúság: </string>
+    <string name="inGettingLocation">Helyadatok lekérdezése…</string>
+    <string name="pleaseCheckIfGPSIsOn">Ellenőrizze, hogy be van-e kapcsolva a GPS.</string>
+    <string name="privacy_policy_header">Adatvédelmi irányelvek</string>
+    <string name="privacy_policy"><u>Utolsó frissítés: 2020-11-20</u>\n\n
+Az alkalmazás használata során az adatvédelmi irányelvekben ismertetjük a személyes adatok kezelését.\n\n
+<b>A felhasználói adatok gyűjtése</b>\n
+Az alkalmazás fejlesztője nem gyűjt személyes adatokat. Az alkalmazás azonban harmadik fél hirdetési szolgáltatását (Google AdMob™) használja, amely személyes adatokat gyűjthet. A szolgáltatás adatvédelmi irányelvei a <a href="https://policies.google.com/privacy">Google adatvédelmi irányelveiben</a> olvashatók.\n\n
+<b>További engedélyek</b>\n
+Az alkalmazás csak az Ön engedélyével használja a helyadatokat. Ezeket az adatokat más alkalmazások vagy szolgáltatások nem használják fel. Az internetkapcsolatot a hirdetési bannerek megjelenítésére használja az alkalmazás.\n\n
+<b>Módosítások</b>\n
+Ez az adatvédelmi irányelv bármikor, bármilyen okból módosítható.\n\n
+<b>Hozzájárulás a használathoz</b>\n
+Az alkalmazás használatával Ön elfogadja ezt az adatvédelmi irányelvet, valamint a fent említett harmadik fél adatvédelmi irányelveit. Ha nem ért egyet velük, kérjük, távolítsa el az alkalmazást.\n\n
+<b>Kapcsolat</b>\n
+Ha kérdése van az adatvédelmi irányelvekkel kapcsolatban, írjon a következő e-mail-címre: <a href="mailto:withlet11@gmail.com">withlet11@gmail.com</a>.</string>
+    <string name="clock_base_panel">Óralap panel</string>
+    <string name="sky_panel">Égbolt panel</string>
+    <string name="sun_and_moon_panel">Nap és Hold panel</string>
+    <string name="horizon_panel">Horizont panel</string>
+    <string name="clock_hands_panel">Óramutatók panel</string>
+    <string name="celestial_hemisphere">Égi félgömb</string>
+    <string name="clock_hands_visibility">Óramutatók megjelenítése</string>
+    <string name="clock_with_planisphere_lite_settings">Clock with Planisphere lite beállításai</string>
+    <string name="attention"><b>Figyelem:</b> A Clock with Planisphere lite alkalmazás widgetjét hozzá kell adni a kezdőképernyőhöz. Ha még nem tette meg, adja hozzá a widgetet a kezdőképernyő beállításaiban. Az égbolt panel percenként frissül, ezért előfordulhat, hogy a beállítások módosítása nem lép azonnal érvénybe.</string>
+    <string name="display_control">Megjelenítési beállítások</string>
+    <plurals name="clockhands_visibility_notice">
+        <item quantity="one">%d másodperc múlva módosul az óramutatók megjelenítése.</item>
+        <item quantity="other">%d másodperc múlva módosul az óramutatók megjelenítése.</item>
+    </plurals>
+    <plurals name="update_notice">
+        <item quantity="one">A widget %d másodperc múlva frissül.</item>
+        <item quantity="other">A widget %d másodperc múlva frissül.</item>
+    </plurals>
+</resources>

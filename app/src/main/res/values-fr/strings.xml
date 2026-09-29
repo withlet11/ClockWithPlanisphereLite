@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_permission_to_access_location_permanent">Aucune autorisation d’accès à la localisation. Veuillez vérifier les autorisations de l’application dans les paramètres système.</string>
+    <string name="no_permission_to_access_location_once">Aucune autorisation d’accès à la localisation.</string>
+    <string name="modify_location">Modifier</string>
+    <string name="license">Licence</string>
+    <string name="locationSettings">Paramètres du site d’observation</string>
+    <string name="opensource_licenses">Licences open source</string>
+    <string name="latitude">Latitude : </string>
+    <string name="longitude">Longitude : </string>
+    <string name="inGettingLocation">Obtention de la localisation…</string>
+    <string name="pleaseCheckIfGPSIsOn">Veuillez vérifier que le GPS est activé.</string>
+    <string name="privacy_policy_header">Politique de confidentialité</string>
+    <string name="privacy_policy"><u>Dernière mise à jour : 20/11/2020</u>\n\n
+Lors de l’utilisation de cette application, la présente politique de confidentialité décrit la manière dont les données personnelles sont traitées.\n\n
+<b>Collecte des données utilisateur</b>\n
+Le développeur de l’application ne collecte aucune donnée personnelle. Toutefois, cette application utilise un service publicitaire tiers (Google AdMob™), qui peut collecter des données personnelles. Vous pouvez consulter la politique de confidentialité de ce service sur la <a href="https://policies.google.com/privacy">politique de confidentialité de Google</a>.\n\n
+<b>Autorisations supplémentaires</b>\n
+Cette application utilise les données de localisation uniquement si vous l’y autorisez. Ces données ne sont utilisées par aucune autre application ni aucun autre service. Une connexion Internet est utilisée pour afficher les bannières publicitaires.\n\n
+<b>Modifications</b>\n
+Cette politique de confidentialité peut être modifiée à tout moment et pour quelque raison que ce soit.\n\n
+<b>Votre consentement</b>\n
+En utilisant cette application, vous acceptez la présente politique de confidentialité ainsi que les politiques de confidentialité des tiers mentionnées ci-dessus. Si vous n’acceptez pas ces conditions, veuillez désinstaller l’application.\n\n
+<b>Nous contacter</b>\n
+Pour toute question concernant cette politique de confidentialité, vous pouvez nous contacter par e-mail à l’adresse suivante : <a href="mailto:withlet11@gmail.com">withlet11@gmail.com</a>.</string>
+    <string name="clock_base_panel">Cadran de l’horloge</string>
+    <string name="sky_panel">Voûte céleste</string>
+    <string name="sun_and_moon_panel">Soleil et Lune</string>
+    <string name="horizon_panel">Horizon</string>
+    <string name="clock_hands_panel">Aiguilles de l’horloge</string>
+    <string name="celestial_hemisphere">Hémisphère céleste</string>
+    <string name="clock_hands_visibility">Affichage des aiguilles</string>
+    <string name="clock_with_planisphere_lite_settings">Paramètres de Clock with Planisphere lite</string>
+    <string name="attention"><b>Attention :</b> Vous devez ajouter le widget de Clock with Planisphere lite à l’écran d’accueil. Si ce n’est pas encore fait, ajoutez-le dans les paramètres de l’écran d’accueil. Le panneau de la voûte céleste n’étant actualisé qu’une fois par minute, les modifications des paramètres peuvent ne pas être prises en compte immédiatement.</string>
+    <string name="display_control">Paramètres d’affichage</string>
+    <plurals name="clockhands_visibility_notice">
+        <item quantity="one">L’affichage des aiguilles sera modifié dans %d seconde.</item>
+        <item quantity="many">L’affichage des aiguilles sera modifié dans %d secondes.</item>
+    </plurals>
+    <plurals name="update_notice">
+        <item quantity="one">Le widget sera actualisé dans %d seconde.</item>
+        <item quantity="many">Le widget sera actualisé dans %d secondes.</item>
+    </plurals>
+</resources>
