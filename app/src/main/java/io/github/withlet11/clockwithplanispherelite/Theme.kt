@@ -32,12 +32,6 @@ import androidx.compose.ui.graphics.Color
 
 private val LightColorScheme = lightColorScheme(
     // seed color #082080
-//    primary = Color(0xFF545C8C), // #1234EE (colorPrimary)
-//    onPrimary = Color.White,
-//    primaryContainer = Color(0xFF082080), // #082080 (colorPrimaryDark)
-//    onPrimaryContainer = Color.White,
-//    secondary = Color(0xFF1090FF), // #1090FF (colorAccent)
-//    onSecondary = Color.White,
     primary = Color(0xFF545C8C),
     onPrimary = Color(0xFFFAF8FF),
     secondary = Color(0xFF5B5E72),
@@ -85,12 +79,6 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-//    primary = Color(0xFF74BBFB),
-//    onPrimary = Color(0xFF081040),
-//    primaryContainer = Color(0xFF082080),
-//    onPrimaryContainer = Color.White,
-//    secondary = Color(0xFF1090FF),
-//    onSecondary = Color.White,
     primary = Color(0xFF969BC4),
     onPrimary = Color(0xFF181D3F),
     secondary = Color(0xFF9B9CB3),
