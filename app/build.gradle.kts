@@ -5,6 +5,7 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
     id("com.google.android.gms.oss-licenses-plugin")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
@@ -47,6 +48,9 @@ android {
             signingConfig = signingConfigs.getByName("config")
         }
     }
+    buildFeatures {
+        compose = true
+    }
     namespace = "io.github.withlet11.clockwithplanispherelite"
 
     compileOptions {
@@ -60,6 +64,13 @@ kotlin {
 }
 
 dependencies {
+    val composeBom = platform("androidx.compose:compose-bom:2025.02.00")
+    implementation(composeBom)
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.activity:activity-compose")
+
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
