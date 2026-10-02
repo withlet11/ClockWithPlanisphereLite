@@ -94,4 +94,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
+
+    // for Jetpack Glance AppWidget
+    implementation("androidx.glance:glance-appwidget:1.2.0")
+    implementation("androidx.glance:glance-material3:1.2.0")
 }

@@ -35,8 +35,8 @@ import androidx.compose.runtime.*
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
-import io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.Companion.FULL_UPDATE_INTERVAL
-import io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.Companion.PARTIAL_UPDATE_INTERVAL
+import io.github.withlet11.clockwithplanispherelite.widget.CwpGlanceReceiver.Companion.FULL_UPDATE_INTERVAL
+import io.github.withlet11.clockwithplanispherelite.widget.CwpGlanceReceiver.Companion.PARTIAL_UPDATE_INTERVAL
 import androidx.core.content.edit
 
 
