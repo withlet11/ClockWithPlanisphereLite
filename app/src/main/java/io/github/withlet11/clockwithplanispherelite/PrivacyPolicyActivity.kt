@@ -22,27 +22,19 @@
 package io.github.withlet11.clockwithplanispherelite
 
 import android.os.Bundle
-import android.text.method.LinkMovementMethod
-import android.view.MenuItem
-import android.widget.TextView
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.MaterialTheme
 
 
 class PrivacyPolicyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_privacy_policy)
-
-        setSupportActionBar(findViewById(R.id.my_toolbar3)) // ToolBar instead of ActionBar
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        findViewById<TextView>(R.id.privacy_policy_text).movementMethod =
-            LinkMovementMethod.getInstance()
+        setContent {
+            MaterialTheme {
+                PrivacyPolicyScreen(onBack = { finish() })
+            }
+        }
     }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) finish()
-        return true
-    }
-
 }
+

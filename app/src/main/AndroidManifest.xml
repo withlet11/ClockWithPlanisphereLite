@@ -20,16 +20,12 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <!-- action android:name="io.github.withlet11.clockwithplanispherelite.widget.CwpWidget.ACTION_UPDATE" / -->
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/clock_with_planisphere_widget_info" />
         </receiver>
-        <!-- meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" / -->
 
         <activity
             android:name=".MainActivity"

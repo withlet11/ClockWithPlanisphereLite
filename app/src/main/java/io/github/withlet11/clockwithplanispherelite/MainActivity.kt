@@ -24,19 +24,14 @@ package io.github.withlet11.clockwithplanispherelite
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
-import android.text.Editable
-import android.text.TextWatcher
-import android.text.method.DigitsKeyListener
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
-import androidx.appcompat.widget.Toolbar
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.*
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
@@ -60,14 +55,15 @@ class MainActivity : AppCompatActivity() {
     private var latitude: Double? = 0.0
     private var longitude: Double? = 0.0
 
-    private var isClockHandsVisible = true
-    private var isSouthernSky = false
+    private var isClockHandsVisible by mutableStateOf(true)
+    private var isSouthernSky by mutableStateOf(false)
 
-    private lateinit var latitudeField: TextView
-    private lateinit var longitudeField: TextView
-    private lateinit var applyLocationButton: Button
-    private lateinit var getLocationButton: Button
-    private lateinit var statusField: TextView
+    private var latitudeText by mutableStateOf("")
+    private var longitudeText by mutableStateOf("")
+
+    private var isLocationFieldsEnabled by mutableStateOf(true)
+    private var statusText by mutableStateOf("")
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
@@ -76,133 +72,100 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         loadPreviousPosition()
-        setContentView(R.layout.activity_main)
+        latitudeText = "%+f".format(latitude)
+        longitudeText = "%+f".format(longitude)
 
-        val toolbar: Toolbar = findViewById(R.id.my_toolbar)
-        toolbar.setLogo(R.drawable.ic_launcher_foreground)
-        toolbar.setTitle(R.string.app_name)
+        setContent {
+            MaterialTheme {
+                MainScreen(
+                    isClockHandsVisible = isClockHandsVisible,
+                    onClockHandsVisibleChanged = { b ->
+                        isClockHandsVisible = b
+                        getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
+                            putBoolean(IS_CLOCK_HANDS_VISIBLE, isClockHandsVisible)
+                        }
+                        val delay =
+                            ((System.currentTimeMillis() + 1).let { PARTIAL_UPDATE_INTERVAL - it % PARTIAL_UPDATE_INTERVAL } / 1000).toInt()
+                        Toast.makeText(
+                            applicationContext,
+                            resources.getQuantityString(
+                                R.plurals.clockhands_visibility_notice,
+                                delay,
+                                delay
+                            ),
+                            Toast.LENGTH_LONG
+                        ).run { show() }
+                    },
+                    isSouthernSky = isSouthernSky,
+                    onSouthernSkyChanged = { b ->
+                        isSouthernSky = b
+                        getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
+                            putBoolean(IS_SOUTHERN_SKY, isSouthernSky)
+                        }
+                        val delay =
+                            ((System.currentTimeMillis() + 1).let { FULL_UPDATE_INTERVAL - it % FULL_UPDATE_INTERVAL } / 1000).toInt()
+                        Toast.makeText(
+                            applicationContext,
+                            resources.getQuantityString(R.plurals.update_notice, delay, delay),
+                            Toast.LENGTH_LONG
+                        ).run { show() }
+                    },
+                    latitudeText = latitudeText,
+                    onLatitudeChanged = { text ->
+                        latitudeText = text
+                        latitude = text.replace(',', '.').toDoubleOrNull()
+                        latitude?.let { if (it > 90.0 || it < -90.0) latitude = null }
+                        isLocationFieldsEnabled = true
+                    },
+                    longitudeText = longitudeText,
+                    onLongitudeChanged = { text ->
+                        longitudeText = text
+                        longitude = text.replace(',', '.').toDoubleOrNull()
+                        longitude?.let { if (it > 180.0 || it < -180.0) longitude = null }
+                        isLocationFieldsEnabled = true
+                    },
+                    isLocationFieldsEnabled = isLocationFieldsEnabled,
+                    onApplyLocation = {
+                        if (latitude != null && longitude != null) {
+                            getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
+                                putFloat(LATITUDE, latitude!!.toFloat())
+                                putFloat(LONGITUDE, longitude!!.toFloat())
+                            }
+                        }
 
-        toolbar.inflateMenu(R.menu.menu_main)
-
-        toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.item_licenses -> {
-                    startActivity(Intent(application, LicenseActivity::class.java))
-                }
-                R.id.item_credits -> {
-                    startActivity(Intent(this, OssLicensesMenuActivity::class.java))
-                }
-                android.R.id.home -> finish()
+                        val delay =
+                            ((System.currentTimeMillis() + 1).let { FULL_UPDATE_INTERVAL - it % FULL_UPDATE_INTERVAL } / 1000).toInt()
+                        Toast.makeText(
+                            applicationContext,
+                            resources.getQuantityString(R.plurals.update_notice, delay, delay),
+                            Toast.LENGTH_LONG
+                        ).run { show() }
+                    },
+                    onGetLocation = { startGPS() },
+                    statusText = statusText,
+                    onLicensesClick = {
+                        startActivity(Intent(application, LicenseActivity::class.java))
+                    },
+                    onPrivacyPolicyClick = {
+                        startActivity(Intent(application, PrivacyPolicyActivity::class.java))
+                    },
+                    onCreditsClick = {
+                        startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+                    },
+                    onFinish = { finish() }
+                )
             }
-
-            true
-        }
-
-        prepareGUIComponents()
-
-        val switch1: SwitchCompat = findViewById(R.id.mode_switch)
-        switch1.isChecked = isClockHandsVisible
-        switch1.setOnCheckedChangeListener { _, b ->
-            isClockHandsVisible = b
-            getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
-                putBoolean(IS_CLOCK_HANDS_VISIBLE, isClockHandsVisible)
-            }
-            val delay =
-                ((System.currentTimeMillis() + 1).let { PARTIAL_UPDATE_INTERVAL - it % PARTIAL_UPDATE_INTERVAL } / 1000).toInt()
-            Toast.makeText(
-                applicationContext,
-                resources.getQuantityString(R.plurals.clockhands_visibility_notice, delay, delay),
-                Toast.LENGTH_LONG
-            ).run { show() }
-        }
-
-        val switch2: SwitchCompat = findViewById(R.id.view_switch)
-        switch2.isChecked = isSouthernSky
-        switch2.setOnCheckedChangeListener { _, b ->
-            isSouthernSky = b
-            getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
-                putBoolean(IS_SOUTHERN_SKY, isSouthernSky)
-            }
-            val delay =
-                ((System.currentTimeMillis() + 1).let { FULL_UPDATE_INTERVAL - it % FULL_UPDATE_INTERVAL } / 1000).toInt()
-            Toast.makeText(
-                applicationContext,
-                resources.getQuantityString(R.plurals.update_notice, delay, delay),
-                Toast.LENGTH_LONG
-            ).run { show() }
         }
 
         setLocationService()
     }
 
-    private fun prepareGUIComponents() {
-        latitudeField = findViewById<TextView>(R.id.latitudeField).apply {
-            keyListener = DigitsKeyListener.getInstance("0123456789.,+-")
-            setAutofillHints("%+.4f".format(23.4567))
-            hint = "%+.4f".format(23.4567)
-            text = "%+f".format(latitude)
-            addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun afterTextChanged(p0: Editable?) {}
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    latitude = latitudeField.text.toString().replace(',', '.').toDoubleOrNull()
-                    latitude?.let { if (it > 90.0 || it < -90.0) latitude = null }
-                    latitudeField.setTextColor(if (latitude == null) Color.RED else Color.DKGRAY)
-                    applyLocationButton.isEnabled = latitude != null && longitude != null
-                }
-            })
-        }
-
-        longitudeField = findViewById<TextView>(R.id.longitudeField).apply {
-            keyListener = DigitsKeyListener.getInstance("0123456789.,+-")
-            setAutofillHints("%+.3f".format(123.456))
-            hint = "%+.3f".format(123.456)
-            text = "%+f".format(longitude)
-            addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun afterTextChanged(p0: Editable?) {}
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    longitude = longitudeField.text.toString().replace(',', '.').toDoubleOrNull()
-                    longitude?.let { if (it > 180.0 || it < -180.0) longitude = null }
-                    longitudeField.setTextColor(if (longitude == null) Color.RED else Color.DKGRAY)
-                    applyLocationButton.isEnabled = latitude != null && longitude != null
-                }
-            })
-        }
-
-        applyLocationButton = findViewById<Button>(R.id.applyLocationButton).apply {
-            setOnClickListener {
-                if (latitude != null && longitude != null) {
-                    getSharedPreferences(OBSERVATION_POSITION, MODE_PRIVATE).edit {
-                        putFloat(LATITUDE, latitude!!.toFloat())
-                        putFloat(LONGITUDE, longitude!!.toFloat())
-                    }
-                }
-
-                val delay =
-                    ((System.currentTimeMillis() + 1).let { FULL_UPDATE_INTERVAL - it % FULL_UPDATE_INTERVAL } / 1000).toInt()
-                Toast.makeText(
-                    applicationContext,
-                    resources.getQuantityString(R.plurals.update_notice, delay, delay),
-                    Toast.LENGTH_LONG
-                ).run { show() }
-            }
-        }
-
-        getLocationButton = findViewById<Button>(R.id.getLocationButton).apply {
-            setOnClickListener { startGPS() }
-        }
-
-        statusField = findViewById(R.id.statusField)
-    }
-
     private fun setLocationService() {
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, MAXIMUM_UPDATE_INTERVAL)
-            .setMinUpdateIntervalMillis(MINIMUM_UPDATE_INTERVAL)
-            .setWaitForAccurateLocation(true)
-            .build()
+        locationRequest =
+            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, MAXIMUM_UPDATE_INTERVAL)
+                .setMinUpdateIntervalMillis(MINIMUM_UPDATE_INTERVAL)
+                .setWaitForAccurateLocation(true)
+                .build()
 
 
         locationCallback = object : LocationCallback() {
@@ -211,10 +174,10 @@ class MainActivity : AppCompatActivity() {
 
                 latitude = location?.latitude
                 longitude = location?.longitude
-                latitudeField.text = "%+f".format(latitude)
-                longitudeField.text = "%+f".format(longitude)
+                latitudeText = "%+f".format(latitude)
+                longitudeText = "%+f".format(longitude)
                 unlockViewItems()
-                statusField.text = ""
+                statusText = ""
 
                 fusedLocationClient.removeLocationUpdates(this)
             }
@@ -241,22 +204,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun lockViewItems() {
-        latitudeField.isEnabled = false
-        longitudeField.isEnabled = false
-        applyLocationButton.isEnabled = false
-        getLocationButton.isEnabled = false
+        isLocationFieldsEnabled = false
     }
 
     private fun unlockViewItems() {
-        latitudeField.isEnabled = true
-        longitudeField.isEnabled = true
-        applyLocationButton.isEnabled = latitude != null && longitude != null
-        getLocationButton.isEnabled = true
+        isLocationFieldsEnabled = true
     }
 
     private fun startGPS() {
         lockViewItems()
-        statusField.text = getString(R.string.inGettingLocation)
+        statusText = getString(R.string.inGettingLocation)
         val isPermissionFineLocation = ActivityCompat.checkSelfPermission(
             this, Manifest.permission.ACCESS_FINE_LOCATION
         )
@@ -280,7 +237,7 @@ class MainActivity : AppCompatActivity() {
                 )
             } else {
                 unlockViewItems()
-                statusField.text = getString(R.string.pleaseCheckIfGPSIsOn)
+                statusText = getString(R.string.pleaseCheckIfGPSIsOn)
             }
         }
     }
@@ -291,7 +248,7 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
         ) {
-            statusField.text = getString(R.string.no_permission_to_access_location_permanent)
+            statusText = getString(R.string.no_permission_to_access_location_permanent)
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -311,7 +268,7 @@ class MainActivity : AppCompatActivity() {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startGPS()
             } else {
-                statusField.text = getString(R.string.no_permission_to_access_location_once)
+                statusText = getString(R.string.no_permission_to_access_location_once)
             }
         }
     }
