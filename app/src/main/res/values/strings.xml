@@ -59,16 +59,18 @@
     <string name="horizon_panel">Horizon panel</string>
     <string name="clock_hands_panel">Clock hands panel</string>
     <string name="celestial_hemisphere">Celestial hemisphere</string>
+    <string name="north_full_label">North</string>
+    <string name="south_full_label">South</string>
     <string name="clock_hands_visibility">Clock hands visibility</string>
     <string name="clock_with_planisphere_lite_settings">Clock with Planisphere lite settings</string>
     <string name="attention"><b>Attention:</b>Please add an app widget of Clock with Planisphere lite to the home screen, if you have done it. Settings change may not occur immediately because the sky panel is refreshed not every second but every minute.</string>
     <string name="display_control">Display Control</string>
     <plurals name="clockhands_visibility_notice">
-        <item quantity="one">"Clock hands will appear/disappear %d second later</item>
-        <item quantity="other">"Clock hands will appear/disappear %d seconds later</item>
+        <item quantity="one">Clock hands will appear/disappear %d second later</item>
+        <item quantity="other">Clock hands will appear/disappear %d seconds later</item>
     </plurals>
     <plurals name="update_notice">
-        <item quantity="one">"App Widget will be updated %d second later</item>
-        <item quantity="other">"App Widget will be updated %d seconds later</item>
+        <item quantity="one">App Widget will be updated %d second later</item>
+        <item quantity="other">App Widget will be updated %d seconds later</item>
     </plurals>
 </resources>

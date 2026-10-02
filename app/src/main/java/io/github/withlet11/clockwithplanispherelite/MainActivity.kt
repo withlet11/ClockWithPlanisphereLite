@@ -29,8 +29,8 @@ import android.os.Bundle
 import android.os.Looper
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         loadPreviousPosition()
@@ -76,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         longitudeText = "%+f".format(longitude)
 
         setContent {
-            MaterialTheme {
+            CwpTheme {
                 MainScreen(
                     isClockHandsVisible = isClockHandsVisible,
                     onClockHandsVisibleChanged = { b ->

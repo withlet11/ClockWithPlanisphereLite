@@ -29,6 +29,8 @@ Pour toute question concernant cette politique de confidentialité, vous pouvez 
     <string name="horizon_panel">Horizon</string>
     <string name="clock_hands_panel">Aiguilles de l’horloge</string>
     <string name="celestial_hemisphere">Hémisphère céleste</string>
+    <string name="north_full_label">Boréal</string>
+    <string name="south_full_label">Austral</string>
     <string name="clock_hands_visibility">Affichage des aiguilles</string>
     <string name="clock_with_planisphere_lite_settings">Paramètres de Clock with Planisphere lite</string>
     <string name="attention"><b>Attention :</b> Vous devez ajouter le widget de Clock with Planisphere lite à l’écran d’accueil. Si ce n’est pas encore fait, ajoutez-le dans les paramètres de l’écran d’accueil. Le panneau de la voûte céleste n’étant actualisé qu’une fois par minute, les modifications des paramètres peuvent ne pas être prises en compte immédiatement.</string>
@@ -36,9 +38,11 @@ Pour toute question concernant cette politique de confidentialité, vous pouvez 
     <plurals name="clockhands_visibility_notice">
         <item quantity="one">L’affichage des aiguilles sera modifié dans %d seconde.</item>
         <item quantity="many">L’affichage des aiguilles sera modifié dans %d secondes.</item>
+        <item quantity="other">L’affichage des aiguilles sera modifié dans %d secondes.</item>
     </plurals>
     <plurals name="update_notice">
         <item quantity="one">Le widget sera actualisé dans %d seconde.</item>
         <item quantity="many">Le widget sera actualisé dans %d secondes.</item>
+        <item quantity="other">Le widget sera actualisé dans %d secondes.</item>
     </plurals>
 </resources>

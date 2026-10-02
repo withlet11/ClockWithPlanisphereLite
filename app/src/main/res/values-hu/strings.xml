@@ -29,6 +29,8 @@ Ha kérdése van az adatvédelmi irányelvekkel kapcsolatban, írjon a következ
     <string name="horizon_panel">Horizont panel</string>
     <string name="clock_hands_panel">Óramutatók panel</string>
     <string name="celestial_hemisphere">Égi félgömb</string>
+    <string name="north_full_label">Északi</string>
+    <string name="south_full_label">Déli</string>
     <string name="clock_hands_visibility">Óramutatók megjelenítése</string>
     <string name="clock_with_planisphere_lite_settings">Clock with Planisphere lite beállításai</string>
     <string name="attention"><b>Figyelem:</b> A Clock with Planisphere lite alkalmazás widgetjét hozzá kell adni a kezdőképernyőhöz. Ha még nem tette meg, adja hozzá a widgetet a kezdőképernyő beállításaiban. Az égbolt panel percenként frissül, ezért előfordulhat, hogy a beállítások módosítása nem lép azonnal érvénybe.</string>
